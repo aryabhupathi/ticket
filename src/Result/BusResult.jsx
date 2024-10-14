@@ -2,16 +2,16 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import SingleBus from "../Bus/SingleBus";
 import RoundBus from "../Bus/Roundbus";
-import { Box } from "@mui/material";
+import Layout from "../Layout";
 
 const BusResults = () => {
   const location = useLocation();
   const { formData } = location.state;
   return (
-    <Box>
+    <Layout>
       {formData.tripType === "single" && <SingleBus />}
       {formData.tripType === "round" && <RoundBus />}
-    </Box>
+    </Layout>
   );
 };
 

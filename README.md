@@ -6,19 +6,18 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Modal,
+  Modal,Grid
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useLocation } from "react-router-dom";
 import { bus } from "../data"; // Adjust the import as necessary
 import jsPDF from "jspdf";
 
-const BusResults = () => {
+const SingleBus = () => {
   const location = useLocation();
   const { formData } = location.state;
   const [selectedSeats, setSelectedSeats] = useState({});
   const [fare, setFare] = useState(0);
-  const [openModal, setOpenModal] = useState(false);
   const [openConfirmModal, setOpenConfirmModal] = useState(false); // State for confirmation modal
   const [selectedBus, setSelectedBus] = useState(null);
   const [expanded, setExpanded] = useState(false);
@@ -89,9 +88,17 @@ const BusResults = () => {
         );
         if (selectedBusDetails) {
           doc.text(`Bus: ${busName}`, 20, y);
-          doc.text(`Route: ${selectedBusDetails.source} to ${selectedBusDetails.destination}`, 20, y + 10);
+          doc.text(
+            `Route: ${selectedBusDetails.source} to ${selectedBusDetails.destination}`,
+            20,
+            y + 10
+          );
           doc.text(`Seats: ${seats.join(", ")}`, 20, y + 20);
-          doc.text(`Fare: $${selectedBusDetails.fare * seats.length}`, 20, y + 30);
+          doc.text(
+            `Fare: $${selectedBusDetails.fare * seats.length}`,
+            20,
+            y + 30
+          );
           y += 40;
         }
       }
@@ -107,14 +114,33 @@ const BusResults = () => {
   };
 
   return (
-    <Box sx={{ padding: 2 }}>
-      <Typography variant="h4" gutterBottom>
+    <Box
+      sx={{
+        padding: 2,
+        height: "100vh", // Full height of viewport
+        backgroundImage: "url(../../bus.webp)", // Reference to your image in the public folder
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
+    >
+      <Typography
+        variant="h5"
+        sx={{
+          background:
+            "linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          textAlign: "center",
+          margin: 0,
+        }}
+      >
         Available Buses from {formData.source} to {formData.destination}
       </Typography>
 
       {/* Single Trip Logic */}
       {formData.tripType === "single" && (
-        <Box>
+        <Grid xs={12} sm={9} sx = {{border:'2px solid red'}}>
           {outboundTrips.length > 0 ? (
             outboundTrips.map((details, index) => (
               <Accordion
@@ -178,7 +204,11 @@ const BusResults = () => {
                                 textAlign="center"
                                 width="50px"
                                 border="1px solid black"
-                                sx={{ cursor: bookingConfirmed ? "not-allowed" : "pointer" }}
+                                sx={{
+                                  cursor: bookingConfirmed
+                                    ? "not-allowed"
+                                    : "pointer",
+                                }}
                                 onClick={() => handleSeatClick(row[seatRow])}
                               >
                                 {row[seatRow]}
@@ -190,16 +220,17 @@ const BusResults = () => {
                     </Box>
 
                     {/* Show Book button when seats are selected and not confirmed */}
-                    {selectedSeats[details.busName]?.length > 0 && !bookingConfirmed && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleBookSeats}
-                        sx={{ mt: 2 }}
-                      >
-                        Book
-                      </Button>
-                    )}
+                    {selectedSeats[details.busName]?.length > 0 &&
+                      !bookingConfirmed && (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={handleBookSeats}
+                          sx={{ mt: 2 }}
+                        >
+                          Book
+                        </Button>
+                      )}
 
                     {/* Show Download button after booking is confirmed */}
                     {bookingConfirmed && (
@@ -221,7 +252,7 @@ const BusResults = () => {
               No buses available for this route.
             </Typography>
           )}
-        </Box>
+        </Grid>
       )}
 
       {/* Confirmation Modal */}
@@ -241,9 +272,7 @@ const BusResults = () => {
             Confirm Booking
           </Typography>
 
-          <Typography variant="body1">
-            Selected Bus Details:
-          </Typography>
+          <Typography variant="body1">Selected Bus Details:</Typography>
 
           {Object.keys(selectedSeats).map((busName, index) => {
             const busDetails = outboundTrips.find(
@@ -272,7 +301,11 @@ const BusResults = () => {
           <Button variant="contained" sx={{ mt: 2 }} onClick={confirmBooking}>
             Confirm
           </Button>
-          <Button variant="outlined" sx={{ mt: 2, ml: 2 }} onClick={() => setOpenConfirmModal(false)}>
+          <Button
+            variant="outlined"
+            sx={{ mt: 2, ml: 2 }}
+            onClick={() => setOpenConfirmModal(false)}
+          >
             Cancel
           </Button>
         </Box>
@@ -281,4 +314,4 @@ const BusResults = () => {
   );
 };
 
-export default BusResults;
+export default SingleBus;

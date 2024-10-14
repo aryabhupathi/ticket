@@ -12,11 +12,13 @@ import {
   AccordionSummary,
   AccordionDetails,
   Grid,
+  Alert,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { jsPDF } from "jspdf"; // Ensure to install this package
 import { useLocation } from "react-router-dom";
-
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 import { train } from "../data";
 const RoundTrain = () => {
   const location = useLocation();
@@ -202,7 +204,27 @@ const RoundTrain = () => {
   };
 
   const renderTrip = (tripType) => {
-    return trips[tripType].map((train, index) => (
+    const availableTrips = trips[tripType];
+
+    if (availableTrips.length === 0) {
+      return (
+        <Box
+          sx={{
+            border: "2px solid black",
+            backgroundColor: "#f5849b",
+            display: "flex",
+            justifyContent: "center", // Center the content horizontally
+            padding: 2, // Add some padding
+            borderRadius: "8px", // Optional rounded corners
+          }}
+        >
+          <Typography variant="body1">
+            No trains are available for this trip.
+          </Typography>
+        </Box>
+      );
+    }
+    return availableTrips.map((train, index) => (
       <Accordion key={index}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">
@@ -210,92 +232,164 @@ const RoundTrain = () => {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Box sx={{ width: "100%", mb: 2 }}>
-            <Typography variant="body1">
-              Start Time: {train.startTime}
-            </Typography>
-            <Typography variant="body1">End Time: {train.endTime}</Typography>
-            <Typography variant="body1">
-              Stops: {train.stops.join(", ")}
-            </Typography>
-          </Box>
-
-          <Grid container spacing={2}>
-            {train.coaches.map((coach, coachIndex) => (
-              <Grid item xs={12} sm={6} md={2} key={coachIndex}>
-                <Box
-                  sx={{
-                    border: "1px solid #ccc",
-                    borderRadius: "8px",
-                    padding: "16px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    height: "100%",
-                  }}
-                >
-                  <Typography variant="h6">{coach.coachName}</Typography>
-                  <Typography variant="body2">Fare: ${coach.fare}</Typography>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Button
-                      onClick={() =>
-                        incrementCount(
-                          tripType,
-                          train.trainName,
-                          coach.coachName,
-                          coach.fare
-                        )
-                      }
-                      variant="contained"
-                      size="small"
+          <Box
+            sx={{
+              border: "1px solid lightgray", // Set border color
+              borderRadius: "4px", // Rounded corners
+              padding: 2, // Padding inside the box
+              mb: 2, // Margin bottom for spacing
+              backgroundColor: "#f9f9f9", // Light background color
+            }}
+          >
+            <Box sx={{ width: "100%", mb: 2 }}>
+              <Typography variant="body1">
+                Start Time: {train.startTime}
+              </Typography>
+              <Typography variant="body1">End Time: {train.endTime}</Typography>
+              <Typography variant="body1">
+                Stops: {train.stops.join(", ")}
+              </Typography>
+            </Box>
+            <Grid container spacing={3}>
+              {train.coaches.map((coach, coachIndex) => (
+                <Grid item xs={12} sm={6} md={2} key={coachIndex}>
+                  <Box
+                    sx={{
+                      backgroundColor: "#f0f4ff", // Light blue background for the box
+                      border: "1px solid #ccc",
+                      borderRadius: "8px",
+                      padding: "16px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      height: "150px", // Set a fixed height to ensure responsiveness
+                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Slight box shadow for better elevation
+                    }}
+                  >
+                    <Typography variant="h6">{coach.coachName}</Typography>
+                    <Typography variant="body2">Fare: ${coach.fare}</Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center", // Aligns items in a straight line vertically
+                        mt: 2,
+                        border: "1px solid #ddd",
+                        padding: "4px",
+                        borderRadius: "8px",
+                        backgroundColor: "#fff", // Light background for the buttons area
+                      }}
                     >
-                      +
-                    </Button>
-                    <Typography variant="body2" sx={{ mx: 1 }}>
-                      {tripType === "outbound"
-                        ? outboundPassengerCount[
-                            `${train.trainName}-${coach.coachName}`
-                          ] || 0
-                        : returnPassengerCount[
-                            `${train.trainName}-${coach.coachName}`
-                          ] || 0}{" "}
-                    </Typography>
-                    <Button
-                      onClick={() =>
-                        decrementCount(
-                          tripType,
-                          train.trainName,
-                          coach.coachName,
-                          coach.fare
-                        )
-                      }
-                      variant="contained"
-                      size="small"
-                    >
-                      -
-                    </Button>
+                      <Button
+                        onClick={() =>
+                          incrementCount(
+                            tripType,
+                            train.trainName,
+                            coach.coachName,
+                            coach.fare
+                          )
+                        }
+                        sx={{
+                          minWidth: "36px",
+                          height: "30px", // Reduced height for the button
+                          padding: "0", // Remove padding for a more compact button
+                        }}
+                        variant="contained"
+                        size="small"
+                      >
+                        <AddIcon fontSize="small" />
+                      </Button>
+                      <Typography variant="body2" sx={{ mx: 1 }}>
+                        {tripType === "outbound"
+                          ? outboundPassengerCount[
+                              `${train.trainName}-${coach.coachName}`
+                            ] || 0
+                          : returnPassengerCount[
+                              `${train.trainName}-${coach.coachName}`
+                            ] || 0}{" "}
+                      </Typography>
+                      <Button
+                        onClick={() =>
+                          decrementCount(
+                            tripType,
+                            train.trainName,
+                            coach.coachName,
+                            coach.fare
+                          )
+                        }
+                        sx={{
+                          minWidth: "36px",
+                          height: "30px", // Reduced height for the button
+                          padding: "0", // Remove padding for a more compact button
+                        }}
+                        variant="contained"
+                        size="small"
+                      >
+                        <RemoveIcon fontSize="small" />
+                      </Button>
+                    </Box>
                   </Box>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
         </AccordionDetails>
       </Accordion>
     ));
   };
 
   return (
-    <Box sx={{ padding: 3 }}>
-      <Typography variant="h4">Round Trip Train Reservations</Typography>
-
-      <Typography variant="h5" sx={{ mt: 4 }}>
-        Outbound Trip
-      </Typography>
+    <Box
+      sx={{
+        padding: 2,
+        height: "100vh", // Full height of viewport
+        backgroundImage: "url(../../train.jpg)", // Reference to your image in the public folder
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center", // Center the content horizontally
+          padding: 2, // Add some padding
+          borderRadius: "8px", // Optional rounded corners
+        }}
+      >
+        <Typography variant="h4" sx={{ color: "green" }}>
+          Round Trip Train Reservations
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center", // Center the content horizontally
+          padding: 2, // Add some padding
+          borderRadius: "8px", // Optional rounded corners
+        }}
+      >
+        <Typography variant="h4" sx={{ mt: 4, color: "blue" }}>
+          Outbound Trip
+        </Typography>
+      </Box>
       {renderTrip("outbound")}
 
-      <Typography variant="h5" sx={{ mt: 4 }}>
-        Return Trip
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center", // Center the content horizontally
+          padding: 2, // Add some padding
+          borderRadius: "8px", // Optional rounded corners
+        }}
+      >
+        <Typography variant="h4" sx={{ mt: 4, color: "blue" }}>
+          Return Trip
+        </Typography>
+      </Box>
       {renderTrip("return")}
 
       {isReserved ? ( // Conditional rendering based on reservation confirmation
@@ -341,12 +435,23 @@ const RoundTrain = () => {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
+      {/* <Snackbar
         open={successSnackbarOpen}
         autoHideDuration={2000}
         onClose={() => setSuccessSnackbarOpen(false)}
         message="Reservations Confirmed!"
-      />
+      /> */}
+
+      <Snackbar
+        open={successSnackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSuccessSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={() => setSuccessSnackbarOpen(false)} severity="success">
+          Booking confirmed successfully!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

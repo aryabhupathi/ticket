@@ -17,6 +17,8 @@ import jsPDF from "jspdf";
 import { useLocation } from "react-router-dom";
 import { train } from "../data";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 
 const SingleTrain = () => {
   const location = useLocation();
@@ -158,156 +160,233 @@ const SingleTrain = () => {
     return trips[tripType].map((train, index) => (
       <Accordion key={index}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">
-            {train.trainName} ({train.source} to {train.destination})
+          <Typography variant="h6" sx={{ color: "blue", fontWeight: "bold" }}>
+            {train.trainName}
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Box sx={{ width: "100%", mb: 2 }}>
-            <Typography variant="body1">
-              Start Time: {train.startTime}
-            </Typography>
-            <Typography variant="body1">End Time: {train.endTime}</Typography>
-            <Typography variant="body1">
-              Stops: {train.stops.join(", ")}
-            </Typography>
-          </Box>
+          <Box
+            sx={{
+              border: "1px solid lightgray", // Set border color
+              borderRadius: "4px", // Rounded corners
+              padding: 2, // Padding inside the box
+              mb: 2, // Margin bottom for spacing
+              backgroundColor: "#f9f9f9", // Light background color
+            }}
+          >
+            <Box sx={{ width: "100%", mb: 2 }}>
+              <Typography variant="body1" sx={{ color: "red", ml: 2 }}>
+                Route: {train.source} to {train.destination}
+              </Typography>
+              <Typography variant="body1" sx={{ color: "green", ml: 2 }}>
+                Timings: {train.startTime} -- {train.endTime}
+              </Typography>
+              <Typography variant="body1" sx={{ color: "orange", ml: 2 }}>
+                Stops: {train.stops.join(", ")}
+              </Typography>
+            </Box>
 
-          <Grid container spacing={2}>
-            {train.coaches.map((coach, coachIndex) => (
-              <Grid item xs={12} sm={6} md={2} key={coachIndex}>
-                <Box
-                  sx={{
-                    border: "1px solid #ccc",
-                    borderRadius: "8px",
-                    padding: "16px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    height: "50%",
-                  }}
-                >
-                  <Typography variant="h6">{coach.coachName}</Typography>
-                  <Typography variant="body1">
-                    Available Seats: {coach.noOfSeatsAvailable}
-                  </Typography>
-                  <Typography variant="body1">Fare: ${coach.fare}</Typography>
-                  <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                    <Button
-                      onClick={() =>
-                        incrementCount(
-                          train.trainName,
-                          coach.coachName,
-                          coach.fare,
-                          coach.noOfSeatsAvailable
-                        )
-                      }
-                      disabled={reservedCoaches[`${train.trainName}-${coach.coachName}`]}
+            <Grid container spacing={3}>
+              {train.coaches.map((coach, coachIndex) => (
+                <Grid item xs={12} sm={6} md={2} key={coachIndex}>
+                  <Box
+                    sx={{
+                      backgroundColor: "#f0f4ff", // Light blue background for the box
+                      border: "1px solid #ccc",
+                      borderRadius: "8px",
+                      padding: "16px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      height: "150px", // Set a fixed height to ensure responsiveness
+                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Slight box shadow for better elevation
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      sx={{ color: "#333", fontWeight: "bold" }}
                     >
-                      +
-                    </Button>
-                    <Typography variant="body1" sx={{ mx: 2 }}>
-                      {
-                        outboundPassengerCount[
-                          `${train.trainName}-${coach.coachName}`
-                        ]
-                      }
+                      {coach.coachName}
                     </Typography>
-                    <Button
-                      onClick={() =>
-                        decrementCount(
-                          train.trainName,
-                          coach.coachName,
-                          coach.fare
-                        )
-                      }
-                      disabled={reservedCoaches[`${train.trainName}-${coach.coachName}`]}
+                    <Typography variant="body1" sx={{ color: "#555" }}>
+                      Available Seats: {coach.noOfSeatsAvailable}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: "#555" }}>
+                      Fare: ${coach.fare}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center", // Aligns items in a straight line vertically
+                        mt: 2,
+                        border: "1px solid #ddd",
+                        padding: "4px",
+                        borderRadius: "8px",
+                        backgroundColor: "#fff", // Light background for the buttons area
+                      }}
                     >
-                      -
-                    </Button>
+                      <Button
+                        onClick={() =>
+                          incrementCount(
+                            train.trainName,
+                            coach.coachName,
+                            coach.fare,
+                            coach.noOfSeatsAvailable
+                          )
+                        }
+                        disabled={
+                          reservedCoaches[
+                            `${train.trainName}-${coach.coachName}`
+                          ]
+                        }
+                        sx={{
+                          minWidth: "36px",
+                          height: "30px", // Reduced height for the button
+                          padding: "0", // Remove padding for a more compact button
+                        }}
+                      >
+                        <AddIcon fontSize="small" />
+                      </Button>
+
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          mx: 2,
+                          color: "#333",
+                          textAlign: "center",
+                          width: "40px",
+                        }}
+                      >
+                        {
+                          outboundPassengerCount[
+                            `${train.trainName}-${coach.coachName}`
+                          ]
+                        }
+                      </Typography>
+
+                      <Button
+                        onClick={() =>
+                          decrementCount(
+                            train.trainName,
+                            coach.coachName,
+                            coach.fare
+                          )
+                        }
+                        disabled={
+                          reservedCoaches[
+                            `${train.trainName}-${coach.coachName}`
+                          ]
+                        }
+                        sx={{
+                          minWidth: "36px",
+                          height: "30px", // Reduced height for the button
+                          padding: "0", // Remove padding for a more compact button
+                        }}
+                      >
+                        <RemoveIcon fontSize="small" />
+                      </Button>
+                    </Box>
                   </Box>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-          {showDownloadButton ? (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={downloadPDF}
-              sx={{ mt: 2 }}
-            >
-              Download
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleReserve(train)}
-              sx={{ mt: 2 }}
-            >
-              Reserve
-            </Button>
-          )}
+                </Grid>
+              ))}
+            </Grid>
+
+            {showDownloadButton ? (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={downloadPDF}
+                sx={{ mt: 2 }}
+              >
+                Download
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleReserve(train)}
+                sx={{ mt: 2 }}
+              >
+                Reserve
+              </Button>
+            )}
+
+            <Box sx={{ mt: 4 }}>
+              <Typography variant="h5" align="right">
+                Total Fare: ${outboundTotalFare}
+              </Typography>
+            </Box>
+          </Box>
         </AccordionDetails>
       </Accordion>
     ));
   };
 
   return (
-    <Grid>
-      {formData.tripType === "single" && (
-        <Box>
-          <div>
-            <h1>Outbound Trip</h1>
-            <Box>
-              {renderTrip("outbound")}
-              <Box sx={{ mt: 4 }}>
-                <Typography variant="h5" align="right">
-                  Total Fare: ${outboundTotalFare}
-                </Typography>
-              </Box>
-              <Snackbar
-                open={outboundSnackbarOpen}
-                autoHideDuration={3000}
-                onClose={handleCloseSnackbar}
-                message="Tickets reserved successfully!"
-              />
-              <Snackbar
-                open={successSnackbarOpen}
-                message="Booking confirmed successfully!"
-                autoHideDuration={2000}
-              />
-              <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                <DialogTitle>Confirm Outbound Booking</DialogTitle>
-                <DialogContent>
-                  {outboundReservations.length > 0 ? (
-                    outboundReservations.map((reservation, index) => (
-                      <Box key={index} sx={{ mb: 2 }}>
-                        <Typography variant="h6">
-                          {reservation.trainName}
-                        </Typography>
-                        <Typography>Coach: {reservation.coachName}</Typography>
-                        <Typography>Passengers: {reservation.count}</Typography>
-                        <Typography>
-                          Total Fare: ${reservation.totalFareForCoach}
-                        </Typography>
-                      </Box>
-                    ))
-                  ) : (
-                    <Typography>No reservations found.</Typography>
-                  )}
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
-                  <Button onClick={handleConfirmBooking}>Confirm</Button>
-                </DialogActions>
-              </Dialog>
-            </Box>
-          </div>
-        </Box>
-      )}
-    </Grid>
+    <Box
+      sx={{
+        padding: 2,
+        height: "100vh", // Full height of viewport
+        backgroundImage: "url(../../train.jpg)", // Reference to your image in the public folder
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
+    >
+      {" "}
+      <Typography
+        variant="h5"
+        sx={{
+          background:
+            "linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          textAlign: "center",
+          margin: 0,
+        }}
+      >
+        Available Trains from {formData.source} to {formData.destination}
+      </Typography>
+      <Box>
+        {renderTrip("outbound")}
+
+        <Snackbar
+          open={outboundSnackbarOpen}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          message="Tickets reserved successfully!"
+        />
+        <Snackbar
+          open={successSnackbarOpen}
+          message="Booking confirmed successfully!"
+          autoHideDuration={2000}
+        />
+        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <DialogTitle>Confirm Outbound Booking</DialogTitle>
+          <DialogContent>
+            {outboundReservations.length > 0 ? (
+              outboundReservations.map((reservation, index) => (
+                <Box key={index} sx={{ mb: 2 }}>
+                  <Typography variant="h6">{reservation.trainName}</Typography>
+                  <Typography>Coach: {reservation.coachName}</Typography>
+                  <Typography>Passengers: {reservation.count}</Typography>
+                  <Typography>
+                    Total Fare: ${reservation.totalFareForCoach}
+                  </Typography>
+                </Box>
+              ))
+            ) : (
+              <Typography>No reservations found.</Typography>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleConfirmBooking}>Confirm</Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
+    </Box>
   );
 };
 
