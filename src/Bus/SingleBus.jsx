@@ -13,12 +13,12 @@ import { useLocation } from "react-router-dom";
 import { bus } from "../data"; // Adjust the import as necessary
 import jsPDF from "jspdf";
 
-const BusResults = () => {
+const SingleBus
+ = () => {
   const location = useLocation();
   const { formData } = location.state;
   const [selectedSeats, setSelectedSeats] = useState({});
   const [fare, setFare] = useState(0);
-  const [openModal, setOpenModal] = useState(false);
   const [openConfirmModal, setOpenConfirmModal] = useState(false); // State for confirmation modal
   const [selectedBus, setSelectedBus] = useState(null);
   const [expanded, setExpanded] = useState(false);
@@ -281,4 +281,5 @@ const BusResults = () => {
   );
 };
 
-export default BusResults;
+export default SingleBus
+;
