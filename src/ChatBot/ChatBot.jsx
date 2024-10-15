@@ -1,5 +1,3 @@
-// src/Chatbot.js
-
 import React, { useState } from "react";
 import {
   Box,
@@ -9,9 +7,9 @@ import {
   List,
   ListItem,
   ListItemText,
-  Modal,
   Button,
 } from "@mui/material";
+import SendIcon from '@mui/icons-material/Send';
 
 const Chatbot = ({ open, onClose }) => {
   const [messages, setMessages] = useState([]);
@@ -51,22 +49,35 @@ const Chatbot = ({ open, onClose }) => {
     );
   };
 
+  // New function to handle key presses
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevents form submission
+      handleSend(); // Calls the send function
+    }
+  };
+
   return (
     <Box
       sx={{
-        position: "fixed", // Changed to fixed to stay in the viewport
-        bottom: 80, // Adjust to position above the bottom
-        right: 20, // Adjust to position from the right
+        position: "fixed",
+        bottom: 80,
+        right: 20,
         width: 300,
-        bgcolor: "background.paper",
-        boxShadow: 3, // Use a smaller shadow for a cleaner look
+        boxShadow: 3,
         borderRadius: "8px",
         overflow: "hidden",
+        backgroundImage: "url(../../chat.jpg)", // Replace with your image path
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
       }}
       open={open}
       onClose={onClose}
     >
-      <Paper elevation={3}>
+      <Paper elevation={3} sx={{
+            backgroundColor:'#b2edc6'}}>
         <Box sx={{ padding: 2, maxHeight: 400, overflowY: "auto" }}>
           <Typography variant="h6">Chatbot</Typography>
           <List>
@@ -85,12 +96,19 @@ const Chatbot = ({ open, onClose }) => {
           <TextField
             variant="outlined"
             fullWidth
+            size="small"
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress} // Add key press handler here
             placeholder="Type a message..."
           />
-          <Button onClick={handleSend} variant="contained" sx={{ ml: 1 }}>
-            Send
+          <Button
+            onClick={handleSend}
+            variant="contained"
+            size="small"
+            sx={{ ml: 1 }}
+          >
+            <SendIcon fontSize="small" />
           </Button>
         </Box>
       </Paper>

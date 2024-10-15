@@ -80,39 +80,6 @@ const SingleBus = () => {
       setshowMessage(true);
     }, 2000);
   };
-
-  // const downloadPDF = () => {
-  //   const doc = new jsPDF();
-  //   doc.text("Reservation Details", 20, 20);
-
-  //   let y = 30;
-  //   Object.keys(selectedSeats).forEach((busName) => {
-  //     const seats = selectedSeats[busName];
-  //     if (seats.length > 0) {
-  //       const selectedBusDetails = outboundTrips.find(
-  //         (bus) => bus.busName === busName
-  //       );
-  //       if (selectedBusDetails) {
-  //         doc.text(`Bus: ${busName}`, 20, y);
-  //         doc.text(
-  //           `Route: ${selectedBusDetails.source} to ${selectedBusDetails.destination}`,
-  //           20,
-  //           y + 10
-  //         );
-  //         doc.text(`Seats: ${seats.join(", ")}`, 20, y + 20);
-  //         doc.text(
-  //           `Fare: $${selectedBusDetails.fare * seats.length}`,
-  //           20,
-  //           y + 30
-  //         );
-  //         y += 40;
-  //       }
-  //     }
-  //   });
-
-  //   doc.save("reservation-details.pdf");
-  // };
-
   // Handle accordion expansion
 
   const downloadPDF = () => {
@@ -222,11 +189,15 @@ const SingleBus = () => {
       sx={{
         padding: 2,
         // position: "relative", // Position relative to ensure child elements align properly
-        height: "100vh", // Full height of the viewport
-        backgroundImage: "url(../../bus.webp)", // Reference to your image in the public folder
-        backgroundSize: "cover", // Cover the entire area
-        backgroundRepeat: "no-repeat", // No repeat
-        backgroundPosition: "center", // Center the image
+        
+  backgroundImage: "url(../../bus.webp)", /* Replace with your image path */
+  backgroundSize: 'cover', /* Ensure the image covers the entire area */
+  backgroundRepeat: 'no-repeat', /* Prevent repeating the image */
+  backgroundPosition: 'center', /* Center the image */
+  backgroundAttachment: 'fixed', /* Make the background fixed */
+  minHeight: '100vh' /* Ensure the container is at least the height of the viewport */
+
+
       }}
     >
       <Typography

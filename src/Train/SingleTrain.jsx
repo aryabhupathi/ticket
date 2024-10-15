@@ -291,8 +291,13 @@ const SingleTrain = () => {
                 </Grid>
               ))}
             </Grid>
-
+            <Box sx={{ mt: 4 }}>
+              <Typography variant="h5" align="center">
+                Total Fare: ${outboundTotalFare}
+              </Typography>
+            </Box>
             {showDownloadButton ? (
+              <Box sx={{display:'flex', justifyContent:'center'}}>
               <Button
                 variant="contained"
                 color="primary"
@@ -300,8 +305,8 @@ const SingleTrain = () => {
                 sx={{ mt: 2 }}
               >
                 Download
-              </Button>
-            ) : (
+              </Button></Box>
+            ) : (<Box sx={{display:'flex', justifyContent:'center'}}>
               <Button
                 variant="contained"
                 color="primary"
@@ -310,13 +315,10 @@ const SingleTrain = () => {
               >
                 Reserve
               </Button>
+              </Box>
             )}
 
-            <Box sx={{ mt: 4 }}>
-              <Typography variant="h5" align="right">
-                Total Fare: ${outboundTotalFare}
-              </Typography>
-            </Box>
+           
           </Box>
         </AccordionDetails>
       </Accordion>
@@ -326,12 +328,12 @@ const SingleTrain = () => {
   return (
     <Box
       sx={{
-        padding: 2,
-        height: "100vh", // Full height of viewport
-        backgroundImage: "url(../../train.jpg)", // Reference to your image in the public folder
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
+        backgroundImage:"url(../../train.jpg)", /* Replace with your image path */
+  backgroundSize: 'cover', /* Ensure the image covers the entire area */
+  backgroundRepeat: 'no-repeat', /* Prevent repeating the image */
+  backgroundPosition: 'center', /* Center the image */
+  backgroundAttachment: 'fixed', /* Make the background fixed */
+  minHeight: '100vh' /* Ensure the container is at least the height of the viewport */
       }}
     >
       {" "}
@@ -344,6 +346,7 @@ const SingleTrain = () => {
           WebkitTextFillColor: "transparent",
           textAlign: "center",
           margin: 0,
+        paddingTop:2
         }}
       >
         Available Trains from {formData.source} to {formData.destination}

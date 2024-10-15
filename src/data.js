@@ -364,6 +364,7 @@ export const flight = [
     destination: "New York",
     stops: ["Reykjavik"],
     flightName: "Atlantic Airways",
+    baseFare:200,
     categories: [
       {
         categoryName: "Economy",
@@ -408,6 +409,7 @@ export const flight = [
     destination: "Los Angeles",
     stops: ["Chicago"],
     flightName: "Pacific Airlines",
+    baseFare:350,
     categories: [
       {
         categoryName: "Economy",
@@ -425,5 +427,26 @@ export const flight = [
         fare: 2500,
       },
     ],
+    layout: {
+      rows: 12,
+      seatsPerRow: 4,
+      seatConfiguration: [
+        ["1A", "1B", "1C", "1D"],
+        ["2A", "2B", "2C", "2D"],
+        ["3A", "3B", "3C", "3D"],
+        ["4A", "4B", "4C", "4D"],
+        ["5A", "5B", "5C", "5D"],
+        ["6A", "6B", "6C", "6D"],
+        ["7A", "7B", "7C", "7D"],
+        ["8A", "8B", "8C", "8D"],
+        ["9A", "9B", "9C", "9D"],
+        ["10A", "10B", "10C", "10D"],
+        ["11A", "11B", "11C", "11D"],
+        ["12A", "12B", "12C", "12D"],
+        ["13A", "13B", "13C", "13D"],
+        ["14A", "14B", "14C", "14D"],
+        ["15A", "15B", "15C", "15D"],
+      ],
+    },
   },
 ];

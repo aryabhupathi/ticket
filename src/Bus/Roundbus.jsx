@@ -240,11 +240,13 @@ const RoundBus = () => {
       sx={{
         padding: 2,
         // position: "relative", // Position relative to ensure child elements align properly
-        height: "100vh", // Full height of the viewport
-        backgroundImage: "url(../../bus.webp)", // Reference to your image in the public folder
-        backgroundSize: "cover", // Cover the entire area
-        backgroundRepeat: "no-repeat", // No repeat
-        backgroundPosition: "center", // Center the image
+        backgroundImage: "url(../../bus.webp)", /* Replace with your image path */
+  backgroundSize: 'cover', /* Ensure the image covers the entire area */
+  backgroundRepeat: 'no-repeat', /* Prevent repeating the image */
+  backgroundPosition: 'center', /* Center the image */
+  backgroundAttachment: 'fixed', /* Make the background fixed */
+  minHeight: '100vh' /* Ensure the container is at least the height of the viewport */
+
       }}
     >
       <Typography
@@ -372,6 +374,8 @@ const RoundBus = () => {
                     </Typography>
                     {selectedSeats.outbound[bus.busName]?.length > 0 &&
                       !bookingConfirmed.outbound && (
+                        
+    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                         <Button
                           variant="contained"
                           color="primary"
@@ -380,8 +384,10 @@ const RoundBus = () => {
                         >
                           Book Outbound
                         </Button>
+                        </Box>
                       )}
                     {bookingConfirmed.outbound && (
+                      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                       <Button
                         variant="contained"
                         color="primary"
@@ -390,6 +396,7 @@ const RoundBus = () => {
                       >
                         Download Outbound PDF
                       </Button>
+                      </Box>
                     )}
                   </Box>
                 </AccordionDetails>
@@ -500,17 +507,20 @@ const RoundBus = () => {
                       Total Fare: ${fare.return}
                     </Typography>
                     {selectedSeats.return[bus.busName]?.length > 0 &&
-                      !bookingConfirmed.return && (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleBookSeats("return")}
-                          sx={{ mt: 2 }}
-                        >
-                          Book Return
-                        </Button>
-                      )}
+  !bookingConfirmed.return && (
+    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => handleBookSeats("return")}
+      >
+        Book Return
+      </Button>
+    </Box>
+  )}
+
                     {bookingConfirmed.return && (
+                      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                       <Button
                         variant="contained"
                         color="primary"
@@ -519,6 +529,7 @@ const RoundBus = () => {
                       >
                         Download Return PDF
                       </Button>
+                      </Box>
                     )}
                   </Box>
                 </AccordionDetails>

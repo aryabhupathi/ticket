@@ -227,7 +227,7 @@ const RoundTrain = () => {
     return availableTrips.map((train, index) => (
       <Accordion key={index}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">
+        <Typography variant="h6" sx={{ color: "blue", fontWeight: "bold" }}>
             {train.trainName} ({train.source} to {train.destination})
           </Typography>
         </AccordionSummary>
@@ -240,13 +240,15 @@ const RoundTrain = () => {
               mb: 2, // Margin bottom for spacing
               backgroundColor: "#f9f9f9", // Light background color
             }}
-          >
+          ><Typography variant="h6" sx={{ color: "blue", fontWeight: "bold" }}>
+            {train.source} to {train.destination}
+          </Typography>
             <Box sx={{ width: "100%", mb: 2 }}>
-              <Typography variant="body1">
+              <Typography variant="body1" sx={{color:'red'}}>
                 Start Time: {train.startTime}
               </Typography>
-              <Typography variant="body1">End Time: {train.endTime}</Typography>
-              <Typography variant="body1">
+              <Typography variant="body1" sx={{color:'green'}}>End Time: {train.endTime}</Typography>
+              <Typography variant="body1" sx={{color:'orange'}}>
                 Stops: {train.stops.join(", ")}
               </Typography>
             </Box>
@@ -341,69 +343,54 @@ const RoundTrain = () => {
   return (
     <Box
       sx={{
-        padding: 2,
-        height: "100vh", // Full height of viewport
-        backgroundImage: "url(../../train.jpg)", // Reference to your image in the public folder
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
+       backgroundImage:"url(../../train2.jpg)", /* Replace with your image path */
+  backgroundSize: 'cover', /* Ensure the image covers the entire area */
+  backgroundRepeat: 'no-repeat', /* Prevent repeating the image */
+  backgroundPosition: 'center', /* Center the image */
+  backgroundAttachment: 'fixed', /* Make the background fixed */
+  minHeight: '100vh',
+  paddingLeft:2,
+  paddingRight:2
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center", // Center the content horizontally
-          padding: 2, // Add some padding
-          borderRadius: "8px", // Optional rounded corners
-        }}
-      >
-        <Typography variant="h4" sx={{ color: "green" }}>
+        <Typography variant="h4" p={2} sx={{
+          background:
+            "linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          textAlign: "center",}}>
           Round Trip Train Reservations
         </Typography>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center", // Center the content horizontally
-          padding: 2, // Add some padding
-          borderRadius: "8px", // Optional rounded corners
-        }}
-      >
-        <Typography variant="h4" sx={{ mt: 4, color: "blue" }}>
+      
+        <Typography variant="h5"  sx={{ mt: 2,
+          color:'red',
+          textAlign: "center",}}>
           Outbound Trip
         </Typography>
-      </Box>
       {renderTrip("outbound")}
 
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center", // Center the content horizontally
-          padding: 2, // Add some padding
-          borderRadius: "8px", // Optional rounded corners
-        }}
-      >
-        <Typography variant="h4" sx={{ mt: 4, color: "blue" }}>
+        <Typography variant="h5" sx={{ mt: 2,
+        color:'red',
+          textAlign: "center",}}>
           Return Trip
         </Typography>
-      </Box>
       {renderTrip("return")}
 
       {isReserved ? ( // Conditional rendering based on reservation confirmation
+      
+        <Box sx={{display:'flex', justifyContent:'center'}}>
         <Button variant="contained" onClick={downloadPDF} sx={{ mt: 4 }}>
           Download PDF
-        </Button>
+        </Button></Box>
       ) : (
+        <Box sx={{display:'flex', justifyContent:'center'}}>
         <Button
           variant="contained"
           onClick={handleReserve}
           sx={{ mt: 4, mr: 2 }}
         >
           Reserve
-        </Button>
+        </Button></Box>
       )}
 
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
