@@ -35,7 +35,7 @@ const TicketReservationForm = () => {
   });
   const navigate = useNavigate();
   const [botOpen, setBotOpen] = useState(false);
-
+ // eslint-disable-next-line
   const handleBotToggle = () => {
     setBotOpen(!botOpen);
   };

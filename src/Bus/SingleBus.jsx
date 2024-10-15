@@ -24,7 +24,8 @@ const SingleBus = () => {
   const [openConfirmModal, setOpenConfirmModal] = useState(false); // State for confirmation modal
   const [selectedBus, setSelectedBus] = useState(null);
   const [expanded, setExpanded] = useState(false);
-  const [showDownloadButton, setShowDownloadButton] = useState(false); // State to manage download button visibility
+   // eslint-disable-next-line
+   const [showDownloadButton, setShowDownloadButton] = useState(false); // State to manage download button visibility
   const [bookingConfirmed, setBookingConfirmed] = useState(false); // State to manage booking confirmation
   const [showMessage, setshowMessage] = useState(false);
   // Filter bus details based on source and destination for outbound trips

@@ -26,15 +26,18 @@ const RoundTrain = () => {
 
   // States for outbound trip
   const [outboundPassengerCount, setOutboundPassengerCount] = useState({});
-  const [outboundTotalFare, setOutboundTotalFare] = useState(0);
+  // eslint-disable-next-line
+   const [outboundTotalFare, setOutboundTotalFare] = useState(0);
 
   // States for return trip
   const [returnPassengerCount, setReturnPassengerCount] = useState({});
-  const [returnTotalFare, setReturnTotalFare] = useState(0);
+   // eslint-disable-next-line
+   const [returnTotalFare, setReturnTotalFare] = useState(0);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
-  const [showDownloadButton, setShowDownloadButton] = useState(false);
+   // eslint-disable-next-line
+   const [showDownloadButton, setShowDownloadButton] = useState(false);
   const [modalReservations, setModalReservations] = useState({
     outboundRes: [],
     returnRes: [],
@@ -104,7 +107,8 @@ const RoundTrain = () => {
 
     setPassengerCount((prev) => {
       const currentCount = prev[`${trainName}-${coachName}`] || 0;
-      const coach = trips[type]
+       // eslint-disable-next-line
+       const coach = trips[type]
         .find((t) => t.trainName === trainName)
         ?.coaches.find((c) => c.coachName === coachName);
 
