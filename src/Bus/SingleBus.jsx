@@ -24,8 +24,8 @@ const SingleBus = () => {
   const [openConfirmModal, setOpenConfirmModal] = useState(false); // State for confirmation modal
   const [selectedBus, setSelectedBus] = useState(null);
   const [expanded, setExpanded] = useState(false);
-   // eslint-disable-next-line
-   const [showDownloadButton, setShowDownloadButton] = useState(false); // State to manage download button visibility
+  // eslint-disable-next-line
+  const [showDownloadButton, setShowDownloadButton] = useState(false); // State to manage download button visibility
   const [bookingConfirmed, setBookingConfirmed] = useState(false); // State to manage booking confirmation
   const [showMessage, setshowMessage] = useState(false);
   // Filter bus details based on source and destination for outbound trips
@@ -190,22 +190,21 @@ const SingleBus = () => {
       sx={{
         padding: 2,
         // position: "relative", // Position relative to ensure child elements align properly
-        
-  backgroundImage: "url(../../bus.webp)", /* Replace with your image path */
-  backgroundSize: 'cover', /* Ensure the image covers the entire area */
-  backgroundRepeat: 'no-repeat', /* Prevent repeating the image */
-  backgroundPosition: 'center', /* Center the image */
-  backgroundAttachment: 'fixed', /* Make the background fixed */
-  minHeight: '100vh' /* Ensure the container is at least the height of the viewport */
 
-
+        backgroundImage:
+          "url(../../bus.webp)" /* Replace with your image path */,
+        backgroundSize: "cover" /* Ensure the image covers the entire area */,
+        backgroundRepeat: "no-repeat" /* Prevent repeating the image */,
+        backgroundPosition: "center" /* Center the image */,
+        backgroundAttachment: "fixed" /* Make the background fixed */,
+        minHeight:
+          "100vh" /* Ensure the container is at least the height of the viewport */,
       }}
     >
       <Typography
         variant="h5"
         sx={{
-          background:
-            "linear-gradient(to right,red, green, blue)",
+          background: "linear-gradient(to right,red, green, blue)",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
           textAlign: "center",
@@ -300,6 +299,7 @@ const SingleBus = () => {
                             flexDirection="row"
                             justifyContent="space-around"
                             mb={1}
+                            mx={1}
                           >
                             {/* Display the seats as 1A 2A 3A per row */}
                             {details.layout.seatConfiguration.map(

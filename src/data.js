@@ -190,34 +190,6 @@ export const bus = [
       ],
     },
   },
-  {
-    source: "Detroit",
-    destination: "Chicago",
-    stops: ["Ann Arbor", "Kalamazoo"],
-    busName: "Midwest Flyer",
-    startTime: "01:00 PM",
-    endTime: "06:00 PM",
-    fare: 50,
-    noOfSeatsAvailable: 24,
-    layout: {
-      rows: 12,
-      seatsPerRow: 4,
-      seatConfiguration: [
-        ["1A", "1B", "1C", "1D"],
-        ["2A", "2B", "2C", "2D"],
-        ["3A", "3B", "3C", "3D"],
-        ["4A", "4B", "4C", "4D"],
-        ["5A", "5B", "5C", "5D"],
-        ["6A", "6B", "6C", "6D"],
-        ["7A", "7B", "7C", "7D"],
-        ["8A", "8B", "8C", "8D"],
-        ["9A", "9B", "9C", "9D"],
-        ["10A", "10B", "10C", "10D"],
-        ["11A", "11B", "11C", "11D"],
-        ["12A", "12B", "12C", "12D"],
-      ],
-    },
-  },
 ];
 
 export const train = [
@@ -357,33 +329,18 @@ export const train = [
   },
 ];
 
-
 export const flight = [
   {
     source: "London",
     destination: "New York",
     stops: ["Reykjavik"],
     flightName: "Atlantic Airways",
-    baseFare:200,
-    categories: [
-      {
-        categoryName: "Economy",
-        noOfSeatsAvailable: 150,
-        fare: 500,
-      },
-      {
-        categoryName: "Business",
-        noOfSeatsAvailable: 30,
-        fare: 1500,
-      },
-      {
-        categoryName: "First Class",
-        noOfSeatsAvailable: 10,
-        fare: 3000,
-      },
-    ],
+    baseFare: 200,
+    startTime: "10:00 AM",
+    endTime: "01:00 PM",
+    noOfSeatsAvailable: 190,
     layout: {
-      rows: 12,
+      rows: 15,
       seatsPerRow: 4,
       seatConfiguration: [
         ["1A", "1B", "1C", "1D"],
@@ -403,32 +360,23 @@ export const flight = [
         ["15A", "15B", "15C", "15D"],
       ],
     },
+    seatCategories: [
+      { name: "Economy", price: 500, rows: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] }, // Rows 6-15 are Economy Class
+      { name: "Business", price: 1500, rows: [1, 2] }, // Rows 1-2 are Business Class
+      { name: "First Class", price: 3000, rows: [0] }, // Row 1 is First Class
+    ],
   },
   {
     source: "New York",
     destination: "Los Angeles",
     stops: ["Chicago"],
     flightName: "Pacific Airlines",
-    baseFare:350,
-    categories: [
-      {
-        categoryName: "Economy",
-        noOfSeatsAvailable: 200,
-        fare: 350,
-      },
-      {
-        categoryName: "Business",
-        noOfSeatsAvailable: 40,
-        fare: 1200,
-      },
-      {
-        categoryName: "First Class",
-        noOfSeatsAvailable: 20,
-        fare: 2500,
-      },
-    ],
+    baseFare: 350,
+    startTime: "03:00 PM",
+    endTime: "06:00 PM",
+    noOfSeatsAvailable: 260,
     layout: {
-      rows: 12,
+      rows: 15,
       seatsPerRow: 4,
       seatConfiguration: [
         ["1A", "1B", "1C", "1D"],
@@ -448,5 +396,80 @@ export const flight = [
         ["15A", "15B", "15C", "15D"],
       ],
     },
+    seatCategories: [
+      { name: "Economy", price: 350, rows: [3,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] }, // Rows 6-15 are Economy Class
+      { name: "Business", price: 1200, rows: [1, 2] }, // Rows 1-2 are Business Class
+      { name: "First Class", price: 2500, rows: [0] }, // Row 1 is First Class
+    ],
+  },{
+    source: "Los Angeles",
+    destination: "New York",
+    stops: ["Chicago"],
+    flightName: "Pacific Airlines",
+    baseFare: 350,
+    startTime: "03:00 PM",
+    endTime: "06:00 PM",
+    noOfSeatsAvailable: 260,
+    layout: {
+      rows: 15,
+      seatsPerRow: 4,
+      seatConfiguration: [
+        ["1A", "1B", "1C", "1D"],
+        ["2A", "2B", "2C", "2D"],
+        ["3A", "3B", "3C", "3D"],
+        ["4A", "4B", "4C", "4D"],
+        ["5A", "5B", "5C", "5D"],
+        ["6A", "6B", "6C", "6D"],
+        ["7A", "7B", "7C", "7D"],
+        ["8A", "8B", "8C", "8D"],
+        ["9A", "9B", "9C", "9D"],
+        ["10A", "10B", "10C", "10D"],
+        ["11A", "11B", "11C", "11D"],
+        ["12A", "12B", "12C", "12D"],
+        ["13A", "13B", "13C", "13D"],
+        ["14A", "14B", "14C", "14D"],
+        ["15A", "15B", "15C", "15D"],
+      ],
+    },
+    seatCategories: [
+      { name: "Economy", price: 350, rows: [3,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] }, // Rows 6-15 are Economy Class
+      { name: "Business", price: 1200, rows: [1, 2] }, // Rows 1-2 are Business Class
+      { name: "First Class", price: 2500, rows: [0] }, // Row 1 is First Class
+    ],
+  },
+  {
+    source: "Detroit",
+    destination: "Chicago",
+    stops: ["Ann Arbor", "Kalamazoo"],
+    flightName: "Midwest Flyer",
+    baseFare: 50,
+    startTime: "01:00 PM",
+    endTime: "06:00 PM",
+    noOfSeatsAvailable: 24,
+    layout: {
+      rows: 12,
+      seatsPerRow: 4,
+      seatConfiguration: [
+        ["1A", "1B", "1C", "1D"],
+        ["2A", "2B", "2C", "2D"],
+        ["3A", "3B", "3C", "3D"],
+        ["4A", "4B", "4C", "4D"],
+        ["5A", "5B", "5C", "5D"],
+        ["6A", "6B", "6C", "6D"],
+        ["7A", "7B", "7C", "7D"],
+        ["8A", "8B", "8C", "8D"],
+        ["9A", "9B", "9C", "9D"],
+        ["10A", "10B", "10C", "10D"],
+        ["11A", "11B", "11C", "11D"],
+        ["12A", "12B", "12C", "12D"],
+      ],
+    },
+    seatCategories: [
+      { name: "Business", price: 200, rows: [0, 1] }, // Rows 1-2 are Business Class
+      { name: "First Class", price: 150, rows: [2, 3, 4] }, // Rows 3-5 are First Class
+      { name: "Economy", price: 100, rows: [5, 6, 7, 8, 9, 10, 11] }, // Rows 6-12 are Economy Class
+    ],
   },
 ];
+
+
