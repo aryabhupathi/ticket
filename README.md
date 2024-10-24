@@ -34,3 +34,18 @@
   //     </Grid>
   //   );
   // };
+
+
+
+    <Box
+      sx={{
+        backgroundImage: "url(../../train1.webp)",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        minHeight: "100vh",
+        paddingLeft: 2,
+        paddingRight: 2,
+      }}
+    >

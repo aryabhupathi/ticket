@@ -112,9 +112,6 @@ const TicketReservationForm = () => {
       return;
     }
 
-    console.log("Form data submitted:", formData);
-
-    // Navigate to the results page based on transport type
     if (formData.transportType === "bus") {
       navigate("/results/bus", { state: { formData } });
     } else if (formData.transportType === "train") {

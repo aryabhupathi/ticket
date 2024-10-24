@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Grid,
   Typography,
   Button,
   Snackbar,
@@ -11,14 +10,19 @@ import {
   DialogActions,
   Accordion,
   AccordionSummary,
+  Paper,
   AccordionDetails,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import jsPDF from "jspdf";
 import { useLocation } from "react-router-dom";
 import { train } from "../data";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { FaTrain } from "react-icons/fa6";
+import { FaArrowRightLong } from "react-icons/fa6";
+import "jspdf-autotable";
 
 const SingleTrain = () => {
   const location = useLocation();
@@ -92,6 +96,10 @@ const SingleTrain = () => {
         newReservations[`${train.trainName}-${coach.coachName}`] = {
           trainName: train.trainName,
           coachName: coach.coachName,
+          source: train.source,
+          destination: train.destination,
+          start: train.startTime,
+          end: train.endTime,
           count,
           totalFareForCoach,
         };
@@ -112,7 +120,7 @@ const SingleTrain = () => {
       alert("Please select at least 1 passenger.");
     }
   };
-
+  console.log(outboundReservations, "ooooooooooooooooooo");
   const handleCloseSnackbar = () => {
     setOutboundSnackbarOpen(false);
   };
@@ -131,18 +139,27 @@ const SingleTrain = () => {
     if (reservationsToDownload.length === 0) return;
 
     const doc = new jsPDF();
-    doc.text("Reservation Details", 20, 20);
+    doc.text("Reservation Details", 14, 10);
+    const tableHeaders = [
+      "Train",
+      "Boarding Time",
+      "Coach",
+      "Passengers",
+      "Total Fare",
+    ];
+    const tableRows = reservationsToDownload.map((reservation) => [
+      reservation.trainName,
+      reservation.start,
+      reservation.coachName,
+      reservation.count,
+      `$${reservation.totalFareForCoach}`,
+    ]);
 
-    reservationsToDownload.forEach((reservation, index) => {
-      doc.text(`Reservation ${index + 1}`, 20, 30 + index * 20);
-      doc.text(`Train: ${reservation.trainName}`, 20, 40 + index * 20);
-      doc.text(`Coach: ${reservation.coachName}`, 20, 50 + index * 20);
-      doc.text(`Passengers: ${reservation.count}`, 20, 60 + index * 20);
-      doc.text(
-        `Total Fare: $${reservation.totalFareForCoach}`,
-        20,
-        70 + index * 20
-      );
+    doc.autoTable({
+      head: [tableHeaders],
+      body: tableRows,
+      startY: 20,
+      theme: "grid",
     });
 
     doc.save("reservation-details.pdf");
@@ -159,19 +176,95 @@ const SingleTrain = () => {
   const renderTrip = (tripType) => {
     return trips[tripType].map((train, index) => (
       <Accordion key={index}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6" sx={{ color: "blue", fontWeight: "bold" }}>
-            {train.trainName}
-          </Typography>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: "center",
+            padding: "8px 16px",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mb: { xs: 1, sm: 0 },
+            }}
+          >
+            <FaTrain sx={{ ml: 2, fontSize: { xs: "24px", sm: "28px" } }} /> {}
+          </Box>
+
+          <Box sx={{ alignContent: "center", justifyContent: "center" }}>
+            <Typography
+              variant="h6"
+              sx={{
+                color: "blue",
+                fontWeight: "bold",
+                ml: 2,
+                mb: { xs: 1, sm: 0 },
+              }}
+            >
+              {train.trainName}
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: { xs: "none", sm: "flex" },
+              alignItems: "center",
+              justifyContent: "center",
+              ml: 1,
+            }}
+          >
+            <FaArrowRightLong />
+          </Box>
+
+          <Box sx={{ alignContent: "center", justifyContent: "center" }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "green",
+                ml: 2,
+                mb: { xs: 1, sm: 0 },
+              }}
+            >
+              Route: {train.source} to {train.destination}
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: { xs: "none", sm: "flex" },
+              alignItems: "center",
+              justifyContent: "center",
+              ml: 1,
+            }}
+          >
+            <FaArrowRightLong />
+          </Box>
+          <Box sx={{ alignContent: "center", justifyContent: "center" }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "orange",
+                ml: 2,
+              }}
+            >
+              Time: {train.startTime}
+            </Typography>
+          </Box>
         </AccordionSummary>
+
         <AccordionDetails>
           <Box
             sx={{
-              border: "1px solid lightgray", // Set border color
-              borderRadius: "4px", // Rounded corners
-              padding: 2, // Padding inside the box
-              mb: 2, // Margin bottom for spacing
-              backgroundColor: "#f9f9f9", // Light background color
+              border: "1px solid lightgray",
+              borderRadius: "4px",
+              padding: 2,
+              mb: 2,
+              backgroundColor: "#f9f9f9",
             }}
           >
             <Box sx={{ width: "100%", mb: 2 }}>
@@ -188,18 +281,18 @@ const SingleTrain = () => {
 
             <Grid container spacing={3}>
               {train.coaches.map((coach, coachIndex) => (
-                <Grid item xs={12} sm={6} md={2} key={coachIndex}>
+                <Grid item xs={12} key={coachIndex} sx={{display:'flex', justifyContent:'center'}}>
                   <Box
                     sx={{
-                      backgroundColor: "#f0f4ff", // Light blue background for the box
+                      backgroundColor: "#f0f4ff",
                       border: "1px solid #ccc",
                       borderRadius: "8px",
                       padding: "16px",
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "space-between",
-                      height: "150px", // Set a fixed height to ensure responsiveness
-                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Slight box shadow for better elevation
+                      height: "100px",
+                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                     }}
                   >
                     <Typography
@@ -218,12 +311,12 @@ const SingleTrain = () => {
                       sx={{
                         display: "flex",
                         justifyContent: "space-between",
-                        alignItems: "center", // Aligns items in a straight line vertically
+                        alignItems: "center",
                         mt: 2,
                         border: "1px solid #ddd",
                         padding: "4px",
                         borderRadius: "8px",
-                        backgroundColor: "#fff", // Light background for the buttons area
+                        backgroundColor: "#fff",
                       }}
                     >
                       <Button
@@ -241,9 +334,9 @@ const SingleTrain = () => {
                           ]
                         }
                         sx={{
-                          minWidth: "36px",
-                          height: "30px", // Reduced height for the button
-                          padding: "0", // Remove padding for a more compact button
+                          minWidth: "26px",
+                          height: "20px",
+                          padding: "0",
                         }}
                       >
                         <AddIcon fontSize="small" />
@@ -255,7 +348,7 @@ const SingleTrain = () => {
                           mx: 2,
                           color: "#333",
                           textAlign: "center",
-                          width: "40px",
+                          width: "30px",
                         }}
                       >
                         {
@@ -279,9 +372,9 @@ const SingleTrain = () => {
                           ]
                         }
                         sx={{
-                          minWidth: "36px",
-                          height: "30px", // Reduced height for the button
-                          padding: "0", // Remove padding for a more compact button
+                          minWidth: "26px",
+                          height: "20px",
+                          padding: "0",
                         }}
                       >
                         <RemoveIcon fontSize="small" />
@@ -297,28 +390,28 @@ const SingleTrain = () => {
               </Typography>
             </Box>
             {showDownloadButton ? (
-              <Box sx={{display:'flex', justifyContent:'center'}}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={downloadPDF}
-                sx={{ mt: 2 }}
-              >
-                Download
-              </Button></Box>
-            ) : (<Box sx={{display:'flex', justifyContent:'center'}}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => handleReserve(train)}
-                sx={{ mt: 2 }}
-              >
-                Reserve
-              </Button>
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={downloadPDF}
+                  sx={{ mt: 2 }}
+                >
+                  Download
+                </Button>
+              </Box>
+            ) : (
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleReserve(train)}
+                  sx={{ mt: 2 }}
+                >
+                  Reserve
+                </Button>
               </Box>
             )}
-
-           
           </Box>
         </AccordionDetails>
       </Accordion>
@@ -326,70 +419,138 @@ const SingleTrain = () => {
   };
 
   return (
-    <Box
+    <Grid
+      container
+      justifyContent="center"
       sx={{
-        backgroundImage:"url(../../train.jpg)", /* Replace with your image path */
-  backgroundSize: 'cover', /* Ensure the image covers the entire area */
-  backgroundRepeat: 'no-repeat', /* Prevent repeating the image */
-  backgroundPosition: 'center', /* Center the image */
-  backgroundAttachment: 'fixed', /* Make the background fixed */
-  minHeight: '100vh' /* Ensure the container is at least the height of the viewport */
+        minHeight: "100vh",
+        backgroundImage: "url(../../train1.webp)",
+        backgroundSize: "contain",
+        backgroundRepeat: "repeat",
+        backgroundAttachment: "fixed",
       }}
     >
-      {" "}
-      <Typography
-        variant="h5"
-        sx={{
-          background:
-            "linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          textAlign: "center",
-          margin: 0,
-        paddingTop:2
-        }}
-      >
-        Available Trains from {formData.source} to {formData.destination}
-      </Typography>
-      <Box>
-        {renderTrip("outbound")}
+      <Grid item size={{ xs: 12, sm: 10 }} mt={3}>
+        <Grid item size={{ xs: 12 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            <Paper
+              elevation={4}
+              sx={{
+                backgroundColor: "rgba(245, 244, 181, 0.5)",
+                padding: "8px 16px",
+                borderRadius: 2,
+                border: "2px solid orange",
+                transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                display: "inline-block",
+                "&:hover": {
+                  transform: "scale(1.02)",
+                  boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.3)",
+                },
+              }}
+              mb={2}
+            >
+              <Typography
+                variant="h5"
+                sx={{
+                  background: "linear-gradient(to right, red, green, blue)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  textAlign: "center",
+                  margin: 0,
+                }}
+              >
+                Available trains from {formData.source} to{" "}
+                {formData.destination}
+              </Typography>
+            </Paper>
+          </Box>
+          <Grid sx={{ padding: 2, border: "2px solid black" }}>
+            {renderTrip("outbound")}
 
-        <Snackbar
-          open={outboundSnackbarOpen}
-          autoHideDuration={3000}
-          onClose={handleCloseSnackbar}
-          message="Tickets reserved successfully!"
-        />
-        <Snackbar
-          open={successSnackbarOpen}
-          message="Booking confirmed successfully!"
-          autoHideDuration={2000}
-        />
-        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <DialogTitle>Confirm Outbound Booking</DialogTitle>
-          <DialogContent>
-            {outboundReservations.length > 0 ? (
-              outboundReservations.map((reservation, index) => (
-                <Box key={index} sx={{ mb: 2 }}>
-                  <Typography variant="h6">{reservation.trainName}</Typography>
-                  <Typography>Coach: {reservation.coachName}</Typography>
-                  <Typography>Passengers: {reservation.count}</Typography>
-                  <Typography>
-                    Total Fare: ${reservation.totalFareForCoach}
-                  </Typography>
-                </Box>
-              ))
-            ) : (
-              <Typography>No reservations found.</Typography>
-            )}
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleConfirmBooking}>Confirm</Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
-    </Box>
+            <Snackbar
+              open={successSnackbarOpen}
+              message="Booking confirmed successfully!"
+              autoHideDuration={2000}
+            />
+            <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+              <DialogTitle>
+                <Typography variant="h6" gutterBottom>
+                  Confirm Booking
+                </Typography>
+              </DialogTitle>
+              <DialogContent>
+                {outboundReservations.length > 0 ? (
+                  outboundReservations.map((reservation, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        border: "1px solid lightgray",
+                        borderRadius: "4px",
+                        padding: 2,
+                        mb: 2,
+                        backgroundColor: "#f9f9f9",
+                      }}
+                    >
+                      <Typography
+                        variant="body1"
+                        sx={{ fontWeight: "bold", mb: 1 }}
+                      >
+                        Train {reservation.trainName}
+                      </Typography>
+
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        Route: {reservation.source} to {reservation.destination}
+                      </Typography>
+
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        Time: {reservation.start} -- {reservation.end}
+                      </Typography>
+
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        Coach: {reservation.coachName}
+                      </Typography>
+
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        Passengers: {reservation.count}
+                      </Typography>
+
+                      <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                        Total Fare: ${reservation.totalFareForCoach}
+                      </Typography>
+                    </Box>
+                  ))
+                ) : (
+                  <Typography>No reservations found.</Typography>
+                )}
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  variant="outlined"
+                  sx={{ mt: 2, ml: 2 }}
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  sx={{ mt: 2 }}
+                  onClick={handleConfirmBooking}
+                >
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 

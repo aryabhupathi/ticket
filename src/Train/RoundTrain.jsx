@@ -11,51 +11,45 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Grid,
+  Paper,
   Alert,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { jsPDF } from "jspdf"; // Ensure to install this package
+import { jsPDF } from "jspdf";
 import { useLocation } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { train } from "../data";
+import { FaTrain } from "react-icons/fa6";
+import { FaArrowRightLong } from "react-icons/fa6";
+import "jspdf-autotable";
 const RoundTrain = () => {
   const location = useLocation();
   const { formData } = location.state;
-
-  // States for outbound trip
   const [outboundPassengerCount, setOutboundPassengerCount] = useState({});
-  // eslint-disable-next-line
-   const [outboundTotalFare, setOutboundTotalFare] = useState(0);
-
-  // States for return trip
+  const [outboundTotalFare, setOutboundTotalFare] = useState(0);
   const [returnPassengerCount, setReturnPassengerCount] = useState({});
-   // eslint-disable-next-line
-   const [returnTotalFare, setReturnTotalFare] = useState(0);
-
+  const [returnTotalFare, setReturnTotalFare] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
-   // eslint-disable-next-line
-   const [showDownloadButton, setShowDownloadButton] = useState(false);
+  const [showDownloadButton, setShowDownloadButton] = useState(false);
   const [modalReservations, setModalReservations] = useState({
     outboundRes: [],
     returnRes: [],
     totalFare: 0,
   });
-  const [isReserved, setIsReserved] = useState(false); // New state for reservation confirmation
+  const [isReserved, setIsReserved] = useState(false);
 
   useEffect(() => {
     const initialOutboundCounts = {};
     const initialReturnCounts = {};
-
     train.forEach((train) => {
       train.coaches.forEach((coach) => {
         initialOutboundCounts[`${train.trainName}-${coach.coachName}`] = 0;
-        initialReturnCounts[`${train.trainName}-${coach.coachName}`] = 0; // For return trip
+        initialReturnCounts[`${train.trainName}-${coach.coachName}`] = 0;
       });
     });
-
     setOutboundPassengerCount(initialOutboundCounts);
     setReturnPassengerCount(initialReturnCounts);
   }, []);
@@ -94,7 +88,7 @@ const RoundTrain = () => {
         };
       } else {
         alert("No more available seats.");
-        return prev; // Return previous state if no seats are available
+        return prev;
       }
     });
   };
@@ -107,8 +101,7 @@ const RoundTrain = () => {
 
     setPassengerCount((prev) => {
       const currentCount = prev[`${trainName}-${coachName}`] || 0;
-       // eslint-disable-next-line
-       const coach = trips[type]
+      const coach = trips[type]
         .find((t) => t.trainName === trainName)
         ?.coaches.find((c) => c.coachName === coachName);
 
@@ -120,16 +113,14 @@ const RoundTrain = () => {
           [`${trainName}-${coachName}`]: newCount,
         };
       }
-      return prev; // Return previous state if count is already 0
+      return prev;
     });
   };
-
+  
   const handleReserve = () => {
     const outboundRes = [];
     const returnRes = [];
     let totalFare = 0;
-
-    // Collect outbound reservations
     trips.outbound.forEach((train) => {
       train.coaches.forEach((coach) => {
         const count =
@@ -139,6 +130,10 @@ const RoundTrain = () => {
           outboundRes.push({
             trainName: train.trainName,
             coachName: coach.coachName,
+            source: train.source,
+            destination: train.destination,
+            start: train.startTime,
+            end: train.endTime,
             count,
             totalFareForCoach: fareForCoach,
           });
@@ -146,8 +141,6 @@ const RoundTrain = () => {
         }
       });
     });
-
-    // Collect return reservations
     trips.return.forEach((train) => {
       train.coaches.forEach((coach) => {
         const count =
@@ -155,10 +148,14 @@ const RoundTrain = () => {
         if (count > 0) {
           const fareForCoach = count * coach.fare;
           returnRes.push({
+            totalFareForCoach: fareForCoach,
             trainName: train.trainName,
             coachName: coach.coachName,
+            source: train.source,
+            destination: train.destination,
+            start: train.startTime,
+            end: train.endTime,
             count,
-            totalFareForCoach: fareForCoach,
           });
           totalFare += fareForCoach;
         }
@@ -177,36 +174,63 @@ const RoundTrain = () => {
   const handleConfirmBooking = () => {
     setIsModalOpen(false);
     setShowDownloadButton(true);
-    setIsReserved(true); // Update reservation state
+    setIsReserved(true);
     setSuccessSnackbarOpen(true);
     setTimeout(() => {
       setSuccessSnackbarOpen(false);
     }, 2000);
   };
 
-  const downloadPDF = () => {
-    const { outboundRes, returnRes } = modalReservations;
-    const reservationsToDownload = [...outboundRes, ...returnRes];
-    if (reservationsToDownload.length === 0) return;
+const downloadPDF = () => {
+  const { outboundRes, returnRes } = modalReservations;
+  const reservationsToDownload = [...outboundRes, ...returnRes];
+  if (reservationsToDownload.length === 0) return;
 
-    const doc = new jsPDF();
-    doc.text("Reservation Details", 20, 20);
+  const doc = new jsPDF();
+  const margin = 20;
 
-    reservationsToDownload.forEach((reservation, index) => {
-      doc.text(`Reservation ${index + 1}`, 20, 30 + index * 20);
-      doc.text(`Train: ${reservation.trainName}`, 20, 40 + index * 20);
-      doc.text(`Coach: ${reservation.coachName}`, 20, 50 + index * 20);
-      doc.text(`Passengers: ${reservation.count}`, 20, 60 + index * 20);
-      doc.text(
-        `Total Fare: $${reservation.totalFareForCoach}`,
-        20,
-        70 + index * 20
-      );
-    });
+  doc.setFontSize(16);
+  doc.text("Reservation Details", margin, margin);
 
-    doc.save("reservation-details.pdf");
-  };
+  const headers = ["Reservation No.", "Train Name", "Coach Name", "Passengers", "Total Fare"];
+  const tableRows = reservationsToDownload.map((reservation, index) => [
+    index + 1,
+    reservation.trainName,
+    reservation.coachName,
+    reservation.count,
+    `$${reservation.totalFareForCoach}`,
+  ]);
 
+  doc.autoTable({
+    head: [headers],
+    body: tableRows,
+    startY: margin + 20, 
+    theme: "grid",
+    styles: {
+      halign: "center", 
+    },
+    columnStyles: {
+      0: { cellWidth: 30 }, 
+      1: { cellWidth: 40 }, 
+      2: { cellWidth: 40 }, 
+      3: { cellWidth: 30 }, 
+      4: { cellWidth: 30 }, 
+    },
+    didDrawPage: (data) => {
+
+      let pageCount = doc.internal.getNumberOfPages();
+      let str = `Page ${pageCount}`;
+      doc.setFontSize(10);
+      doc.text(str, data.settings.margin.left, doc.internal.pageSize.getHeight() - 10);
+    },
+  });
+
+  const pageHeight = doc.internal.pageSize.getHeight();
+  doc.setFontSize(10);
+  doc.text("Thank you for your reservation!", margin, pageHeight - 10);
+
+  doc.save("reservation-details.pdf");
+};
   const renderTrip = (tripType) => {
     const availableTrips = trips[tripType];
 
@@ -217,9 +241,9 @@ const RoundTrain = () => {
             border: "2px solid black",
             backgroundColor: "#f5849b",
             display: "flex",
-            justifyContent: "center", // Center the content horizontally
-            padding: 2, // Add some padding
-            borderRadius: "8px", // Optional rounded corners
+            justifyContent: "center",
+            padding: 2,
+            borderRadius: "8px",
           }}
         >
           <Typography variant="body1">
@@ -230,60 +254,145 @@ const RoundTrain = () => {
     }
     return availableTrips.map((train, index) => (
       <Accordion key={index}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography variant="h6" sx={{ color: "blue", fontWeight: "bold" }}>
-            {train.trainName} ({train.source} to {train.destination})
-          </Typography>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: "center",
+            padding: "8px 16px",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mb: { xs: 1, sm: 0 },
+            }}
+          >
+            <FaTrain sx={{ ml: 2, fontSize: { xs: "24px", sm: "28px" } }} />{" "}
+          </Box>
+
+          <Box sx={{ alignContent: "center", justifyContent: "center" }}>
+            <Typography
+              variant="h6"
+              sx={{
+                color: "blue",
+                fontWeight: "bold",
+                ml: 2,
+                mb: { xs: 1, sm: 0 },
+              }}
+            >
+              {train.trainName}
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: { xs: "none", sm: "flex" },
+              alignItems: "center",
+              justifyContent: "center",
+              ml: 1,
+            }}
+          >
+            <FaArrowRightLong />
+          </Box>
+
+          <Box sx={{ alignContent: "center", justifyContent: "center" }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "green",
+                ml: 2,
+                mb: { xs: 1, sm: 0 },
+              }}
+            >
+              Route: {train.source} to {train.destination}
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: { xs: "none", sm: "flex" },
+              alignItems: "center",
+              justifyContent: "center",
+              ml: 1,
+            }}
+          >
+            <FaArrowRightLong />
+          </Box>
+          <Box sx={{ alignContent: "center", justifyContent: "center" }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "orange",
+                ml: 2,
+              }}
+            >
+              Time: {train.startTime}
+            </Typography>
+          </Box>
         </AccordionSummary>
         <AccordionDetails>
           <Box
             sx={{
-              border: "1px solid lightgray", // Set border color
-              borderRadius: "4px", // Rounded corners
-              padding: 2, // Padding inside the box
-              mb: 2, // Margin bottom for spacing
-              backgroundColor: "#f9f9f9", // Light background color
+              border: "1px solid lightgray",
+              borderRadius: "4px",
+              padding: 2,
+              mb: 2,
+              backgroundColor: "#f9f9f9",
             }}
-          ><Typography variant="h6" sx={{ color: "blue", fontWeight: "bold" }}>
-            {train.source} to {train.destination}
-          </Typography>
+          >
             <Box sx={{ width: "100%", mb: 2 }}>
-              <Typography variant="body1" sx={{color:'red'}}>
-                Start Time: {train.startTime}
+              <Typography variant="body1" sx={{ color: "red", ml: 2 }}>
+                Route: {train.source} to {train.destination}
               </Typography>
-              <Typography variant="body1" sx={{color:'green'}}>End Time: {train.endTime}</Typography>
-              <Typography variant="body1" sx={{color:'orange'}}>
+              <Typography variant="body1" sx={{ color: "green", ml: 2 }}>
+                Timings: {train.startTime} -- {train.endTime}
+              </Typography>
+              <Typography variant="body1" sx={{ color: "orange", ml: 2 }}>
                 Stops: {train.stops.join(", ")}
               </Typography>
             </Box>
-            <Grid container spacing={3}>
+            <Grid container spacing={3} sx={{display:'flex', justifyContent:'center'}}>
               {train.coaches.map((coach, coachIndex) => (
-                <Grid item xs={12} sm={6} md={2} key={coachIndex}>
+                <Grid item xs={12} key={coachIndex} >
                   <Box
                     sx={{
-                      backgroundColor: "#f0f4ff", // Light blue background for the box
+                      backgroundColor: "#f0f4ff",
                       border: "1px solid #ccc",
                       borderRadius: "8px",
                       padding: "16px",
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "space-between",
-                      height: "150px", // Set a fixed height to ensure responsiveness
-                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Slight box shadow for better elevation
+                      height: "100px",
+                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                     }}
                   >
-                    <Typography variant="h6">{coach.coachName}</Typography>
-                    <Typography variant="body2">Fare: ${coach.fare}</Typography>
+                    <Typography
+                      variant="h6"
+                      sx={{ color: "#333", fontWeight: "bold" }}
+                    >
+                      {coach.coachName}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: "#555" }}>
+                      Available Seats: {coach.noOfSeatsAvailable}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: "#555" }}>
+                      Fare: ${coach.fare}
+                    </Typography>
                     <Box
                       sx={{
                         display: "flex",
                         justifyContent: "space-between",
-                        alignItems: "center", // Aligns items in a straight line vertically
+                        alignItems: "center",
                         mt: 2,
                         border: "1px solid #ddd",
                         padding: "4px",
                         borderRadius: "8px",
-                        backgroundColor: "#fff", // Light background for the buttons area
+                        backgroundColor: "#fff",
                       }}
                     >
                       <Button
@@ -296,11 +405,10 @@ const RoundTrain = () => {
                           )
                         }
                         sx={{
-                          minWidth: "36px",
-                          height: "30px", // Reduced height for the button
-                          padding: "0", // Remove padding for a more compact button
+                          minWidth: "26px",
+                          height: "20px",
+                          padding: "0",
                         }}
-                        variant="contained"
                         size="small"
                       >
                         <AddIcon fontSize="small" />
@@ -324,11 +432,10 @@ const RoundTrain = () => {
                           )
                         }
                         sx={{
-                          minWidth: "36px",
-                          height: "30px", // Reduced height for the button
-                          padding: "0", // Remove padding for a more compact button
+                          minWidth: "26px",
+                          height: "20px",
+                          padding: "0",
                         }}
-                        variant="contained"
                         size="small"
                       >
                         <RemoveIcon fontSize="small" />
@@ -345,105 +452,177 @@ const RoundTrain = () => {
   };
 
   return (
-    <Box
+    <Grid
+      container
+      justifyContent="center"
       sx={{
-       backgroundImage:"url(../../train2.jpg)", /* Replace with your image path */
-  backgroundSize: 'cover', /* Ensure the image covers the entire area */
-  backgroundRepeat: 'no-repeat', /* Prevent repeating the image */
-  backgroundPosition: 'center', /* Center the image */
-  backgroundAttachment: 'fixed', /* Make the background fixed */
-  minHeight: '100vh',
-  paddingLeft:2,
-  paddingRight:2
+        minHeight: "100vh",
+        backgroundImage: "url(../../train1.webp)",
+        backgroundSize: "contain",
+        backgroundRepeat: "repeat",
+        backgroundAttachment: "fixed",
       }}
     >
-        <Typography variant="h4" p={2} sx={{
-          background:
-            "linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          textAlign: "center",}}>
-          Round Trip Train Reservations
-        </Typography>
-      
-        <Typography variant="h5"  sx={{ mt: 2,
-          color:'red',
-          textAlign: "center",}}>
+      <Grid item size={{ xs: 12, sm: 10 }} mt={3}>
+        <Grid item size={{ xs: 12 }}></Grid>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Paper
+            elevation={4}
+            sx={{
+              backgroundColor: "rgba(245, 244, 181, 0.5)",
+              padding: "8px 16px",
+              borderRadius: 2,
+              border: "2px solid orange",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease",
+              display: "inline-block",
+              "&:hover": {
+                transform: "scale(1.02)",
+                boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.3)",
+              },
+            }}
+            mb={2}
+          >
+            <Typography
+              variant="h5"
+              sx={{
+                background: "linear-gradient(to right, red, green, blue)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                textAlign: "center",
+                margin: 0,
+              }}
+            >
+              Available trains from {formData.source} to {formData.destination}
+            </Typography>
+          </Paper>
+        </Box>
+
+        <Typography
+          variant="h5"
+          sx={{
+            background: "linear-gradient(to right, yellow, red)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            margin: 1,
+          }}
+        >
           Outbound Trip
         </Typography>
-      {renderTrip("outbound")}
-
-        <Typography variant="h5" sx={{ mt: 2,
-        color:'red',
-          textAlign: "center",}}>
+        <Grid sx={{ padding: 2, border: "2px solid black" }}>
+          {renderTrip("outbound")}
+        </Grid>
+        <Typography
+          variant="h5"
+          sx={{
+            background: "linear-gradient(to right, yellow, red)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            margin: 1,
+          }}
+        >
           Return Trip
         </Typography>
-      {renderTrip("return")}
+        <Grid sx={{ padding: 2, border: "2px solid black" }}>
+          {renderTrip("return")}
+        </Grid>
+        {isReserved ? (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button variant="contained" onClick={downloadPDF} sx={{ mt: 4 }}>
+              Download PDF
+            </Button>
+          </Box>
+        ) : (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button
+              variant="contained"
+              onClick={handleReserve}
+              sx={{ mt: 4, mr: 2 }}
+            >
+              Reserve
+            </Button>
+          </Box>
+        )}
 
-      {isReserved ? ( // Conditional rendering based on reservation confirmation
-      
-        <Box sx={{display:'flex', justifyContent:'center'}}>
-        <Button variant="contained" onClick={downloadPDF} sx={{ mt: 4 }}>
-          Download PDF
-        </Button></Box>
-      ) : (
-        <Box sx={{display:'flex', justifyContent:'center'}}>
-        <Button
-          variant="contained"
-          onClick={handleReserve}
-          sx={{ mt: 4, mr: 2 }}
+        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <DialogTitle>
+            <Typography variant="h6" gutterBottom>
+              Confirm Your Booking
+            </Typography>
+          </DialogTitle>
+          <DialogContent>
+            <Box
+              sx={{
+                border: "1px solid lightgray",
+                borderRadius: "4px",
+                padding: 2,
+                mb: 2,
+                backgroundColor: "#f9f9f9",
+              }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                Outbound Trip
+              </Typography>
+              {modalReservations.outboundRes?.map((res, index) => (
+                <>
+                  {" "}
+                  <Typography variant="body2" sx={{ mb: 0.5 }}>
+                    Route: {res.source} to {res.destination}
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 0.5 }}>
+                    Time: {res.start} -- {res.end}
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 0.5 }}>
+                    Coach: {res.coachName}
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 0.5 }}>
+                    Passengers: {res.count}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    Total Fare: ${res.totalFareForCoach}
+                  </Typography>
+                </>
+              ))}
+              <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold" }}>
+                Return Trip
+              </Typography>
+              {modalReservations.returnRes?.map((res, index) => (
+                <Typography key={index}>
+                  {res.count} x {res.trainName} - {res.coachName} = $
+                  {res.totalFareForCoach}
+                </Typography>
+              ))}
+              <Typography variant="h5" sx={{ mt: 2, fontWeight: "bold" }}>
+                Total Fare: ${modalReservations.totalFare}
+              </Typography>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleConfirmBooking}>Confirm</Button>
+          </DialogActions>
+        </Dialog>
+        <Snackbar
+          open={successSnackbarOpen}
+          autoHideDuration={3000}
+          onClose={() => setSuccessSnackbarOpen(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
-          Reserve
-        </Button></Box>
-      )}
-
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <DialogTitle>Confirm Your Reservations</DialogTitle>
-        <DialogContent>
-          <Typography variant="h6">Outbound Trip</Typography>
-          {modalReservations.outboundRes?.map((res, index) => (
-            <Typography key={index}>
-              {res.count} x {res.trainName} - {res.coachName} = $
-              {res.totalFareForCoach}
-            </Typography>
-          ))}
-          <Typography variant="h6" sx={{ mt: 2 }}>
-            Return Trip
-          </Typography>
-          {modalReservations.returnRes?.map((res, index) => (
-            <Typography key={index}>
-              {res.count} x {res.trainName} - {res.coachName} = $
-              {res.totalFareForCoach}
-            </Typography>
-          ))}
-          <Typography variant="h5" sx={{ mt: 2 }}>
-            Total Fare: ${modalReservations.totalFare}
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
-          <Button onClick={handleConfirmBooking}>Confirm</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* <Snackbar
-        open={successSnackbarOpen}
-        autoHideDuration={2000}
-        onClose={() => setSuccessSnackbarOpen(false)}
-        message="Reservations Confirmed!"
-      /> */}
-
-      <Snackbar
-        open={successSnackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSuccessSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert onClose={() => setSuccessSnackbarOpen(false)} severity="success">
-          Booking confirmed successfully!
-        </Alert>
-      </Snackbar>
-    </Box>
+          <Alert
+            onClose={() => setSuccessSnackbarOpen(false)}
+            severity="success"
+          >
+            Booking confirmed successfully!
+          </Alert>
+        </Snackbar>
+      </Grid>
+    </Grid>
   );
 };
 

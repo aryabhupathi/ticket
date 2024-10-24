@@ -361,9 +361,9 @@ export const flight = [
       ],
     },
     seatCategories: [
-      { name: "Economy", price: 500, rows: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] }, // Rows 6-15 are Economy Class
-      { name: "Business", price: 1500, rows: [1, 2] }, // Rows 1-2 are Business Class
-      { name: "First Class", price: 3000, rows: [0] }, // Row 1 is First Class
+      { name: "Economy", price: 500, rows: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] }, 
+      { name: "Business", price: 1500, rows: [1, 2, 3, 4] }, 
+      { name: "First Class", price: 3000, rows: [0] }, 
     ],
   },
   {
@@ -397,9 +397,9 @@ export const flight = [
       ],
     },
     seatCategories: [
-      { name: "Economy", price: 350, rows: [3,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] }, // Rows 6-15 are Economy Class
-      { name: "Business", price: 1200, rows: [1, 2] }, // Rows 1-2 are Business Class
-      { name: "First Class", price: 2500, rows: [0] }, // Row 1 is First Class
+      { name: "Economy", price: 350, rows: [3,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] }, 
+      { name: "Business", price: 1200, rows: [1, 2] }, 
+      { name: "First Class", price: 2500, rows: [0] }, 
     ],
   },{
     source: "Los Angeles",
@@ -432,9 +432,9 @@ export const flight = [
       ],
     },
     seatCategories: [
-      { name: "Economy", price: 350, rows: [3,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] }, // Rows 6-15 are Economy Class
-      { name: "Business", price: 1200, rows: [1, 2] }, // Rows 1-2 are Business Class
-      { name: "First Class", price: 2500, rows: [0] }, // Row 1 is First Class
+      { name: "Economy", price: 350, rows: [3,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] }, 
+      { name: "Business", price: 1200, rows: [1, 2] }, 
+      { name: "First Class", price: 2500, rows: [0] }, 
     ],
   },
   {
@@ -465,11 +465,9 @@ export const flight = [
       ],
     },
     seatCategories: [
-      { name: "Business", price: 200, rows: [0, 1] }, // Rows 1-2 are Business Class
-      { name: "First Class", price: 150, rows: [2, 3, 4] }, // Rows 3-5 are First Class
-      { name: "Economy", price: 100, rows: [5, 6, 7, 8, 9, 10, 11] }, // Rows 6-12 are Economy Class
+      { name: "Business", price: 200, rows: [0, 1] }, 
+      { name: "First Class", price: 150, rows: [2, 3, 4] }, 
+      { name: "Economy", price: 100, rows: [5, 6, 7, 8, 9, 10, 11] }, 
     ],
   },
 ];
-
-
