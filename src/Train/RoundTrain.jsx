@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import {
   Box,
@@ -458,11 +459,11 @@ const downloadPDF = () => {
       sx={{
         minHeight: "100vh",
         backgroundImage: "url(../../train1.webp)",
-        backgroundSize: "contain",
-        backgroundRepeat: "repeat",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed",
-      }}
-    >
+        backgroundPosition: 'center'
+      }}>
       <Grid item size={{ xs: 12, sm: 10 }} mt={3}>
         <Grid item size={{ xs: 12 }}></Grid>
         <Box
