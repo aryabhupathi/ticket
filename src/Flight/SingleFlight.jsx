@@ -21,6 +21,7 @@ import { flight } from "../data";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { MdFlight } from "react-icons/md";
 import "jspdf-autotable";
+import Login from "../Login/Login";
 
 const SingleFlight = () => {
   const location = useLocation();
@@ -33,6 +34,8 @@ const SingleFlight = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [startBooking, setStartBooking] = useState(false);
   const [totalFare, setTotalFare] = useState(0);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const token = JSON.parse(localStorage.getItem("user"));
   const outboundTrips = flight.filter(
     (item) =>
       item.source === formData.source &&
@@ -49,13 +52,13 @@ const SingleFlight = () => {
   };
 
   const handleStartBooking = () => {
-    setStartBooking(true);
+    if (token) {
+      setStartBooking(true);
+    } else {
+      // User is not logged in, open the login modal
+      setLoginModalOpen(true);
+    }
   };
-
-  const handleBookSeats = () => {
-    setOpenConfirmModal(true);
-  };
-
   const handleTotalFareUpdate = (fare) => {
     setTotalFare(fare);
   };
@@ -359,6 +362,10 @@ const SingleFlight = () => {
               <Alert severity="error">No flights found!</Alert>
             )}
           </Grid>
+          <Login
+            open={loginModalOpen}
+            onClose={() => setLoginModalOpen(false)}
+          />
           <Modal
             open={openConfirmModal}
             onClose={() => setOpenConfirmModal(false)}

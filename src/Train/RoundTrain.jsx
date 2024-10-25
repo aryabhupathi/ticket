@@ -25,6 +25,7 @@ import { train } from "../data";
 import { FaTrain } from "react-icons/fa6";
 import { FaArrowRightLong } from "react-icons/fa6";
 import "jspdf-autotable";
+import Login from "../Login/Login";
 const RoundTrain = () => {
   const location = useLocation();
   const { formData } = location.state;
@@ -41,7 +42,8 @@ const RoundTrain = () => {
     totalFare: 0,
   });
   const [isReserved, setIsReserved] = useState(false);
-
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const token = JSON.parse(localStorage.getItem("user"));
   useEffect(() => {
     const initialOutboundCounts = {};
     const initialReturnCounts = {};
@@ -119,59 +121,63 @@ const RoundTrain = () => {
   };
   
   const handleReserve = () => {
-    const outboundRes = [];
-    const returnRes = [];
-    let totalFare = 0;
-    trips.outbound.forEach((train) => {
-      train.coaches.forEach((coach) => {
-        const count =
-          outboundPassengerCount[`${train.trainName}-${coach.coachName}`] || 0;
-        if (count > 0) {
-          const fareForCoach = count * coach.fare;
-          outboundRes.push({
-            trainName: train.trainName,
-            coachName: coach.coachName,
-            source: train.source,
-            destination: train.destination,
-            start: train.startTime,
-            end: train.endTime,
-            count,
-            totalFareForCoach: fareForCoach,
-          });
-          totalFare += fareForCoach;
-        }
+    if (token) {
+      const outboundRes = [];
+      const returnRes = [];
+      let totalFare = 0;
+      trips.outbound.forEach((train) => {
+        train.coaches.forEach((coach) => {
+          const count =
+            outboundPassengerCount[`${train.trainName}-${coach.coachName}`] || 0;
+          if (count > 0) {
+            const fareForCoach = count * coach.fare;
+            outboundRes.push({
+              trainName: train.trainName,
+              coachName: coach.coachName,
+              source: train.source,
+              destination: train.destination,
+              start: train.startTime,
+              end: train.endTime,
+              count,
+              totalFareForCoach: fareForCoach,
+            });
+            totalFare += fareForCoach;
+          }
+        });
       });
-    });
-    trips.return.forEach((train) => {
-      train.coaches.forEach((coach) => {
-        const count =
-          returnPassengerCount[`${train.trainName}-${coach.coachName}`] || 0;
-        if (count > 0) {
-          const fareForCoach = count * coach.fare;
-          returnRes.push({
-            totalFareForCoach: fareForCoach,
-            trainName: train.trainName,
-            coachName: coach.coachName,
-            source: train.source,
-            destination: train.destination,
-            start: train.startTime,
-            end: train.endTime,
-            count,
-          });
-          totalFare += fareForCoach;
-        }
+      trips.return.forEach((train) => {
+        train.coaches.forEach((coach) => {
+          const count =
+            returnPassengerCount[`${train.trainName}-${coach.coachName}`] || 0;
+          if (count > 0) {
+            const fareForCoach = count * coach.fare;
+            returnRes.push({
+              totalFareForCoach: fareForCoach,
+              trainName: train.trainName,
+              coachName: coach.coachName,
+              source: train.source,
+              destination: train.destination,
+              start: train.startTime,
+              end: train.endTime,
+              count,
+            });
+            totalFare += fareForCoach;
+          }
+        });
       });
-    });
-
-    if (outboundRes.length === 0 && returnRes.length === 0) {
-      alert("Please select at least 1 passenger for either trip.");
-      return;
+  
+      if (outboundRes.length === 0 && returnRes.length === 0) {
+        alert("Please select at least 1 passenger for either trip.");
+        return;
+      }
+  
+      setModalReservations({ outboundRes, returnRes, totalFare });
+      setIsModalOpen(true);
+    } else {
+      // User is not logged in, open the login modal
+      setLoginModalOpen(true);
     }
-
-    setModalReservations({ outboundRes, returnRes, totalFare });
-    setIsModalOpen(true);
   };
-
   const handleConfirmBooking = () => {
     setIsModalOpen(false);
     setShowDownloadButton(true);
@@ -551,6 +557,10 @@ const downloadPDF = () => {
           </Box>
         )}
 
+        <Login
+            open={loginModalOpen}
+            onClose={() => setLoginModalOpen(false)}
+          />
         <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <DialogTitle>
             <Typography variant="h6" gutterBottom>

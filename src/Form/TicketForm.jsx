@@ -20,6 +20,7 @@ import { RiSwapBoxFill } from "react-icons/ri";
 import Layout from "../Layout";
 
 const TicketReservationForm = () => {
+  const navigate=useNavigate()
   const [formData, setFormData] = useState({
     transportType: "bus",
     tripType: "single",
@@ -33,12 +34,6 @@ const TicketReservationForm = () => {
     message: "",
     severity: "error",
   });
-  const navigate = useNavigate();
-  const [botOpen, setBotOpen] = useState(false);
- // eslint-disable-next-line
-  const handleBotToggle = () => {
-    setBotOpen(!botOpen);
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,7 +65,6 @@ const TicketReservationForm = () => {
       destination: prev.source,
     }));
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -120,7 +114,6 @@ const TicketReservationForm = () => {
       navigate("/results/flight", { state: { formData } });
     }
   };
-
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
@@ -129,225 +122,234 @@ const TicketReservationForm = () => {
 
   return (
     <Layout>
-    <Grid container justifyContent="center" alignItems="center" sx={{ height: "100vh", position: "relative", backgroundImage: "url(../../home.webp)", // Reference to your image in the public folder
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        sx={{
+          height: "100vh",
+          position: "relative",
+          backgroundImage: "url(../../home.webp)",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
-          backgroundPosition: "center", }}>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          backgroundColor: "#f7f3d7",
-          border: "2px solid red",
-          padding: 3,
-          borderRadius: 2,
-          boxShadow: 2,
-          width: "90%",
-          maxWidth: "600px",
+          backgroundPosition: "center",
         }}
       >
-        <Typography
-          variant="h5"
+        <Box
           sx={{
-            background:
-              "linear-gradient(to right, violet, indigo, blue, green)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            textAlign: "center",
-            margin: 0,
+            display: "flex",
+            flexDirection: "column",
+            backgroundColor: "#f7f3d7",
+            border: "2px solid red",
+            padding: 3,
+            borderRadius: 2,
+            boxShadow: 2,
+            width: "90%",
+            maxWidth: "600px",
           }}
         >
-          Online Ticket Reservation
-        </Typography>
-
-        <form onSubmit={handleSubmit}>
-          {/* Transport Type Tabs */}
-          <Tabs
-            value={formData.transportType}
-            onChange={handleTransportChange}
-            variant="fullWidth"
-            textColor="primary"
-            indicatorColor="primary"
-            sx={{ mb: 2, border: "1px solid #ccc", borderRadius: 1 }}
+          <Typography
+            variant="h5"
+            sx={{
+              background:
+                "linear-gradient(to right, violet, indigo, blue, green)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              textAlign: "center",
+              margin: 0,
+            }}
           >
-            <Tab
-              label={
-                <>
-                  <DirectionsBusIcon
-                    sx={{
-                      color:
-                        formData.transportType === "bus"
-                          ? "green"
-                          : "inherit",
-                    }}
-                  />
-                  Bus
-                </>
-              }
-              value="bus"
-            />
-            <Tab
-              label={
-                <>
-                  <TrainIcon
-                    sx={{
-                      color:
-                        formData.transportType === "train"
-                          ? "green"
-                          : "inherit",
-                    }}
-                  />
-                  Train
-                </>
-              }
-              value="train"
-            />
-            <Tab
-              label={
-                <>
-                  <FlightIcon
-                    sx={{
-                      color:
-                        formData.transportType === "flight"
-                          ? "green"
-                          : "inherit",
-                    }}
-                  />
-                  Flight
-                </>
-              }
-              value="flight"
-            />
-          </Tabs>
+            Online Ticket Reservation
+          </Typography>
 
-          {/* Trip Type Tabs */}
-          <Tabs
-            value={formData.tripType}
-            onChange={handleTripTypeChange}
-            variant="fullWidth"
-            textColor="primary"
-            indicatorColor="primary"
-            sx={{ mb: 2, border: "1px solid #ccc", borderRadius: 1 }}
-          >
-            <Tab
-              label={
-                <>
-                  <ArrowUpwardIcon
-                    sx={{
-                      color:
-                        formData.tripType === "single" ? "green" : "inherit",
-                      fontSize: "1.5rem",
-                    }}
-                  />
-                  Single Trip
-                </>
-              }
-              value="single"
-            />
-            <Tab
-              label={
-                <>
-                  <IoSwapVerticalOutline
-                    style={{
-                      color:
-                        formData.tripType === "round" ? "green" : "inherit",
-                      fontSize: "1.5rem",
-                    }}
-                  />
-                  Round Trip
-                </>
-              }
-              value="round"
-            />
-          </Tabs>
-
-          {/* Source and Destination with Reverse Button */}
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={5}>
-              <TextField
-                fullWidth
-                label="Source"
-                name="source"
-                value={formData.source}
-                onChange={handleChange}
-                placeholder="Enter source city"
-                required
+          <form onSubmit={handleSubmit}>
+            {/* Transport Type Tabs */}
+            <Tabs
+              value={formData.transportType}
+              onChange={handleTransportChange}
+              variant="fullWidth"
+              textColor="primary"
+              indicatorColor="primary"
+              sx={{ mb: 2, border: "1px solid #ccc", borderRadius: 1 }}
+            >
+              <Tab
+                label={
+                  <>
+                    <DirectionsBusIcon
+                      sx={{
+                        color:
+                          formData.transportType === "bus"
+                            ? "green"
+                            : "inherit",
+                      }}
+                    />
+                    Bus
+                  </>
+                }
+                value="bus"
               />
-            </Grid>
-            <Grid item xs={12} sm={2} textAlign="center">
-              <Button variant="contained" onClick={handleReverse} fullWidth>
-                <RiSwapBoxFill />
-              </Button>
-            </Grid>
-            <Grid item xs={12} sm={5}>
-              <TextField
-                fullWidth
-                label="Destination"
-                name="destination"
-                value={formData.destination}
-                onChange={handleChange}
-                placeholder="Enter destination city"
-                required
+              <Tab
+                label={
+                  <>
+                    <TrainIcon
+                      sx={{
+                        color:
+                          formData.transportType === "train"
+                            ? "green"
+                            : "inherit",
+                      }}
+                    />
+                    Train
+                  </>
+                }
+                value="train"
               />
-            </Grid>
-          </Grid>
-
-          {/* Dates (Departure and Return on Single Line) */}
-          <Grid container spacing={2} sx={{ mt: 2, mb: 2 }}>
-            <Grid item xs={formData.tripType === "round" ? 6 : 12}>
-              <TextField
-                fullWidth
-                type="date"
-                label="Departure Date"
-                name="departureDate"
-                value={formData.departureDate}
-                onChange={handleChange}
-                InputLabelProps={{ shrink: true }}
-                required
-                inputProps={{ min: today }}
+              <Tab
+                label={
+                  <>
+                    <FlightIcon
+                      sx={{
+                        color:
+                          formData.transportType === "flight"
+                            ? "green"
+                            : "inherit",
+                      }}
+                    />
+                    Flight
+                  </>
+                }
+                value="flight"
               />
+            </Tabs>
+
+            {/* Trip Type Tabs */}
+            <Tabs
+              value={formData.tripType}
+              onChange={handleTripTypeChange}
+              variant="fullWidth"
+              textColor="primary"
+              indicatorColor="primary"
+              sx={{ mb: 2, border: "1px solid #ccc", borderRadius: 1 }}
+            >
+              <Tab
+                label={
+                  <>
+                    <ArrowUpwardIcon
+                      sx={{
+                        color:
+                          formData.tripType === "single" ? "green" : "inherit",
+                        fontSize: "1.5rem",
+                      }}
+                    />
+                    Single Trip
+                  </>
+                }
+                value="single"
+              />
+              <Tab
+                label={
+                  <>
+                    <IoSwapVerticalOutline
+                      style={{
+                        color:
+                          formData.tripType === "round" ? "green" : "inherit",
+                        fontSize: "1.5rem",
+                      }}
+                    />
+                    Round Trip
+                  </>
+                }
+                value="round"
+              />
+            </Tabs>
+
+            {/* Source and Destination with Reverse Button */}
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} sm={5}>
+                <TextField
+                  fullWidth
+                  label="Source"
+                  name="source"
+                  value={formData.source}
+                  onChange={handleChange}
+                  placeholder="Enter source city"
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={2} textAlign="center">
+                <Button variant="contained" onClick={handleReverse} fullWidth>
+                  <RiSwapBoxFill />
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={5}>
+                <TextField
+                  fullWidth
+                  label="Destination"
+                  name="destination"
+                  value={formData.destination}
+                  onChange={handleChange}
+                  placeholder="Enter destination city"
+                  required
+                />
+              </Grid>
             </Grid>
 
-            {formData.tripType === "round" && (
-              <Grid item xs={6}>
+            {/* Dates (Departure and Return on Single Line) */}
+            <Grid container spacing={2} sx={{ mt: 2, mb: 2 }}>
+              <Grid item xs={formData.tripType === "round" ? 6 : 12}>
                 <TextField
                   fullWidth
                   type="date"
-                  label="Return Date"
-                  name="returnDate"
-                  value={formData.returnDate}
+                  label="Departure Date"
+                  name="departureDate"
+                  value={formData.departureDate}
                   onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
                   required
-                  inputProps={{ min: formData.departureDate || today }}
+                  inputProps={{ min: today }}
                 />
               </Grid>
-            )}
-          </Grid>
 
-          {/* Submit Button */}
-          <Button variant="contained" color="primary" type="submit" fullWidth>
-            Search
-          </Button>
-        </form>
+              {formData.tripType === "round" && (
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    type="date"
+                    label="Return Date"
+                    name="returnDate"
+                    value={formData.returnDate}
+                    onChange={handleChange}
+                    InputLabelProps={{ shrink: true }}
+                    required
+                    inputProps={{ min: formData.departureDate || today }}
+                  />
+                </Grid>
+              )}
+            </Grid>
 
-        {/* Snackbar for error messages */}
-        <Snackbar
-          open={snackbar.open}
-          autoHideDuration={2000}
-          onClose={handleSnackbarClose}
-        >
-          <Alert
+            {/* Submit Button */}
+            <Button variant="contained" color="primary" type="submit" fullWidth>
+              Search
+            </Button>
+          </form>
+
+          {/* Snackbar for error messages */}
+          <Snackbar
+            open={snackbar.open}
+            autoHideDuration={2000}
             onClose={handleSnackbarClose}
-            severity={snackbar.severity}
-            sx={{ width: "100%" }}
           >
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
-      </Box>
-      
-    </Grid>
+            <Alert
+              onClose={handleSnackbarClose}
+              severity={snackbar.severity}
+              sx={{ width: "100%" }}
+            >
+              {snackbar.message}
+            </Alert>
+          </Snackbar>
+
+        </Box>
+      </Grid>
     </Layout>
   );
 };

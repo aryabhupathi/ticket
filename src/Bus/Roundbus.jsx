@@ -11,7 +11,8 @@ import {
   Alert,
   Paper,
 } from "@mui/material";
-import "jspdf-autotable";
+import "jspdf-autotable"
+import Login from "../Login/Login";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useLocation } from "react-router-dom";
 import { bus } from "../data";
@@ -41,6 +42,8 @@ const RoundBus = () => {
     outbound: false,
     return: false,
   });
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const token = JSON.parse(localStorage.getItem("user"));
   const [currentTripType, setCurrentTripType] = useState("");
   const [showMessage, setshowMessage] = useState(false);
   const [downloads, setDownload] = useState(false);
@@ -104,9 +107,18 @@ const RoundBus = () => {
     }));
   };
 
+  
   const handleBookSeats = (tripType) => {
+    if (token) {
+      // User is logged in, open the booking confirmation modal
+      
     setCurrentTripType(tripType);
     setOpenConfirmModal(true);
+      setOpenConfirmModal(true);
+    } else {
+      // User is not logged in, open the login modal
+      setLoginModalOpen(true);
+    }
   };
 
   const confirmBooking = () => {
@@ -683,6 +695,11 @@ const downloadPDF = () => {
             ))}
           </Grid>
 
+          <Login
+            open={loginModalOpen}
+            onClose={() => setLoginModalOpen(false)}
+          />
+          
           {downloads && (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
               <Button

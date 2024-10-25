@@ -8,6 +8,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   Modal,
+  Avatar,
   Alert,
   Paper,
   Snackbar,
@@ -15,11 +16,12 @@ import {
 import Grid from "@mui/material/Grid2";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useLocation } from "react-router-dom";
-import { bus } from "../data"; 
+import { bus } from "../data";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { FaBus } from "react-icons/fa6";
+import Login from "../Login/Login";
 const SingleBus = () => {
   const location = useLocation();
   const { formData } = location.state;
@@ -31,6 +33,8 @@ const SingleBus = () => {
   const [showDownloadButton, setShowDownloadButton] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
   const [showMessage, setshowMessage] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const token = JSON.parse(localStorage.getItem("user"));
   const outboundTrips = bus.filter(
     (item) =>
       item.source === formData.source &&
@@ -71,7 +75,13 @@ const SingleBus = () => {
   };
 
   const handleBookSeats = () => {
-    setOpenConfirmModal(true);
+    if (token) {
+      // User is logged in, open the booking confirmation modal
+      setOpenConfirmModal(true);
+    } else {
+      // User is not logged in, open the login modal
+      setLoginModalOpen(true);
+    }
   };
 
   const confirmBooking = () => {
@@ -82,57 +92,60 @@ const SingleBus = () => {
     }, 2000);
   };
 
-
-const downloadPDF = () => {
-  const doc = new jsPDF();
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 20;
-  doc.setFontSize(22);
-  doc.text("Reservation Details", margin, margin);
-  doc.setFontSize(12);
-  doc.text(`Date: ${new Date().toLocaleDateString()}`, pageWidth - margin - 50, margin);
-  const headers = ["Bus Name", "Route", "Start Time", "Seats", "Fare"];
-  const tableRows = Object.keys(selectedSeats).reduce((rows, busName) => {
-    const seats = selectedSeats[busName];
-    if (seats.length > 0) {
-      const selectedBusDetails = outboundTrips.find(
-        (bus) => bus.busName === busName
-      );
-      if (selectedBusDetails) {
-        const fare = selectedBusDetails.fare * seats.length;
-        rows.push([
-          busName,
-          `${selectedBusDetails.source} to ${selectedBusDetails.destination}`,
-          selectedBusDetails.startTime,
-          seats.join(", "),
-          `$${fare}`,
-        ]);
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    doc.setFontSize(22);
+    doc.text("Reservation Details", margin, margin);
+    doc.setFontSize(12);
+    doc.text(
+      `Date: ${new Date().toLocaleDateString()}`,
+      pageWidth - margin - 50,
+      margin
+    );
+    const headers = ["Bus Name", "Route", "Start Time", "Seats", "Fare"];
+    const tableRows = Object.keys(selectedSeats).reduce((rows, busName) => {
+      const seats = selectedSeats[busName];
+      if (seats.length > 0) {
+        const selectedBusDetails = outboundTrips.find(
+          (bus) => bus.busName === busName
+        );
+        if (selectedBusDetails) {
+          const fare = selectedBusDetails.fare * seats.length;
+          rows.push([
+            busName,
+            `${selectedBusDetails.source} to ${selectedBusDetails.destination}`,
+            selectedBusDetails.startTime,
+            seats.join(", "),
+            `$${fare}`,
+          ]);
+        }
       }
-    }
-    return rows;
-  }, []);
+      return rows;
+    }, []);
 
-  doc.autoTable({
-    head: [headers],
-    body: tableRows,
-    startY: 40, 
-    theme: "grid",
-    styles: {
-      halign: "center",
-    },
-    columnStyles: {
-      0: { cellWidth: 40 },
-      1: { cellWidth: 40 },
-      2: { cellWidth: 40 },
-      3: { cellWidth: 30 },
-      4: { cellWidth: 20 },
-    },
-  });
-  doc.setFontSize(10);
-  doc.text("Thank you for your reservation!", margin, pageHeight - margin);
-  doc.save("bus-reservation-details.pdf");
-};
+    doc.autoTable({
+      head: [headers],
+      body: tableRows,
+      startY: 40,
+      theme: "grid",
+      styles: {
+        halign: "center",
+      },
+      columnStyles: {
+        0: { cellWidth: 40 },
+        1: { cellWidth: 40 },
+        2: { cellWidth: 40 },
+        3: { cellWidth: 30 },
+        4: { cellWidth: 20 },
+      },
+    });
+    doc.setFontSize(10);
+    doc.text("Thank you for your reservation!", margin, pageHeight - margin);
+    doc.save("bus-reservation-details.pdf");
+  };
 
   const handleChange = (busIndex) => {
     setExpanded(expanded === busIndex ? false : busIndex);
@@ -149,7 +162,7 @@ const downloadPDF = () => {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed",
-        backgroundPosition: 'center'
+        backgroundPosition: "center",
       }}
     >
       <Grid item size={{ xs: 12, sm: 10 }} mt={3}>
@@ -238,7 +251,7 @@ const downloadPDF = () => {
                           color: "blue",
                           fontWeight: "bold",
                           ml: 2,
-                          mb: { xs: 1, sm: 0 }, 
+                          mb: { xs: 1, sm: 0 },
                         }}
                       >
                         {details.busName}
@@ -264,7 +277,7 @@ const downloadPDF = () => {
                         sx={{
                           color: "green",
                           ml: 2,
-                          mb: { xs: 1, sm: 0 }, 
+                          mb: { xs: 1, sm: 0 },
                         }}
                       >
                         Route: {details.source} to {details.destination}
@@ -298,130 +311,128 @@ const downloadPDF = () => {
 
                   <AccordionDetails>
                     {}
+                    <Box
+                      sx={{
+                        border: "1px solid lightgray",
+                        borderRadius: "4px",
+                        padding: 2,
+                        mb: 2,
+                        backgroundColor: "#f9f9f9",
+                      }}
+                    >
                       <Box
-                        sx={{
-                          border: "1px solid lightgray",
-                          borderRadius: "4px",
-                          padding: 2,
-                          mb: 2,
-                          backgroundColor: "#f9f9f9",
-                        }}
+                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
                       >
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                        >
-                          <Typography
-                            variant="body2"
-                            sx={{ color: "blue", mr: 1 }}
-                          >
-                            Start Time: {details.startTime}
-                          </Typography>
-
-                          <Typography variant="body2" sx={{ color: "blue" }}>
-                            | End Time: {details.endTime}
-                          </Typography>
-                        </Box>
-
                         <Typography
                           variant="body2"
-                          sx={{ color: "green", mt: 1 }}
+                          sx={{ color: "blue", mr: 1 }}
                         >
-                          Stops: {details.stops.join(", ")}
+                          Start Time: {details.startTime}
                         </Typography>
 
-                        <Typography
-                          variant="body2"
-                          sx={{ color: "orange", mt: 1 }}
-                        >
-                          Seats Available: {details.noOfSeatsAvailable}
-                        </Typography>
-
-                        <Box
-                          display="flex"
-                          flexDirection="column"
-                          mt={2}
-                          sx={{ maxHeight: "300px", overflowY: "auto" }}
-                        >
-                          {[0, 1, 2, 3].map((seatRow) => (
-                            <Box
-                              key={seatRow}
-                              display="flex"
-                              flexDirection="row"
-                              justifyContent="space-around"
-                              mb={2}
-                              mx={1}
-                            >
-                              {details.layout.seatConfiguration.map(
-                                (row, rowIndex) => (
-                                  <Box
-                                    key={rowIndex}
-                                    bgcolor={
-                                      selectedSeats[details.busName]?.includes(
-                                        row[seatRow]
-                                      )
-                                        ? "lightgreen"
-                                        : bookingConfirmed
-                                        ? "lightgray"
-                                        : "lightgray"
-                                    }
-                                    textAlign="center"
-                                    width="50px"
-                                    border="1px solid black"
-                                    sx={{
-                                      cursor: bookingConfirmed
-                                        ? "not-allowed"
-                                        : "pointer",
-                                      fontSize: { xs: "0.8rem", sm: "1rem" },
-                                      transition: "background-color 0.3s",
-                                      "&:hover": {
-                                        backgroundColor: !bookingConfirmed
-                                          ? "lightyellow"
-                                          : "inherit",
-                                      },
-                                      padding: "4px",
-                                      margin: "0 2px",
-                                    }}
-                                    onClick={() =>
-                                      handleSeatClick(row[seatRow])
-                                    }
-                                  >
-                                    {row[seatRow]}
-                                  </Box>
-                                )
-                              )}
-                            </Box>
-                          ))}
-                        </Box>
-
-                        <Typography variant="h6" color="primary" mt={2}>
-                          Total Fare: ${fare}
+                        <Typography variant="body2" sx={{ color: "blue" }}>
+                          | End Time: {details.endTime}
                         </Typography>
                       </Box>
 
-                      <Box sx={{ display: "flex", justifyContent: "center" }}>
-                        {selectedSeats[details.busName]?.length > 0 &&
-                          !bookingConfirmed && (
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              onClick={handleBookSeats}
-                              sx={{ mt: 2 }}
-                            >
-                              Book
-                            </Button>
-                          )}
-                        {bookingConfirmed && (
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "green", mt: 1 }}
+                      >
+                        Stops: {details.stops.join(", ")}
+                      </Typography>
+
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "orange", mt: 1 }}
+                      >
+                        Seats Available: {details.noOfSeatsAvailable}
+                      </Typography>
+
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        mt={2}
+                        sx={{ maxHeight: "300px", overflowY: "auto" }}
+                      >
+                        {[0, 1, 2, 3].map((seatRow) => (
+                          <Box
+                            key={seatRow}
+                            display="flex"
+                            flexDirection="row"
+                            justifyContent="space-around"
+                            mb={2}
+                            mx={1}
+                          >
+                            {details.layout.seatConfiguration.map(
+                              (row, rowIndex) => (
+                                <Box
+                                  key={rowIndex}
+                                  bgcolor={
+                                    selectedSeats[details.busName]?.includes(
+                                      row[seatRow]
+                                    )
+                                      ? "lightgreen"
+                                      : bookingConfirmed
+                                      ? "lightgray"
+                                      : "lightgray"
+                                  }
+                                  textAlign="center"
+                                  width="50px"
+                                  border="1px solid black"
+                                  sx={{
+                                    cursor: bookingConfirmed
+                                      ? "not-allowed"
+                                      : "pointer",
+                                    fontSize: { xs: "0.8rem", sm: "1rem" },
+                                    transition: "background-color 0.3s",
+                                    "&:hover": {
+                                      backgroundColor: !bookingConfirmed
+                                        ? "lightyellow"
+                                        : "inherit",
+                                    },
+                                    padding: "4px",
+                                    margin: "0 2px",
+                                  }}
+                                  onClick={() => handleSeatClick(row[seatRow])}
+                                >
+                                  {row[seatRow]}
+                                </Box>
+                              )
+                            )}
+                          </Box>
+                        ))}
+                      </Box>
+
+                      <Typography variant="h6" color="primary" mt={2}>
+                        Total Fare: ${fare}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      {selectedSeats[details.busName]?.length > 0 &&
+                        !bookingConfirmed && (
                           <Button
                             variant="contained"
                             color="primary"
+                            onClick={handleBookSeats} // This should open the booking modal
                             sx={{ mt: 2 }}
-                            onClick={downloadPDF}
                           >
-                            Download
+                            Book
                           </Button>
                         )}
-                      </Box>
-                    {}
+
+                      {bookingConfirmed && (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          sx={{ mt: 2 }}
+                          onClick={downloadPDF}
+                        >
+                          Download
+                        </Button>
+                      )}
+                    </Box>
                   </AccordionDetails>
                 </Accordion>
               ))
@@ -441,6 +452,12 @@ const downloadPDF = () => {
               Booking confirmed successfully!
             </Alert>
           </Snackbar>
+
+          <Login
+            open={loginModalOpen}
+            onClose={() => setLoginModalOpen(false)}
+          />
+
           <Modal
             open={openConfirmModal}
             onClose={() => setOpenConfirmModal(false)}

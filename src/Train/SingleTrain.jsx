@@ -24,7 +24,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { FaTrain } from "react-icons/fa6";
 import { FaArrowRightLong } from "react-icons/fa6";
 import "jspdf-autotable";
-
+import Login from "../Login/Login";
 const SingleTrain = () => {
   const location = useLocation();
   const { formData } = location.state;
@@ -36,6 +36,8 @@ const SingleTrain = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showDownloadButton, setShowDownloadButton] = useState(false);
   const [reservedCoaches, setReservedCoaches] = useState({});
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const token = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const initialOutboundCounts = {};
@@ -84,8 +86,10 @@ const SingleTrain = () => {
     });
   };
 
-  const handleReserve = (train) => {
-    const passengerCount = outboundPassengerCount;
+  const handleReserve = () => {
+    if (token) {
+      // User is logged in, open the booking confirmation modal
+      const passengerCount = outboundPassengerCount;
     const newReservations = {};
     const newReservedCoaches = { ...reservedCoaches };
 
@@ -120,12 +124,11 @@ const SingleTrain = () => {
     } else {
       alert("Please select at least 1 passenger.");
     }
+    } else {
+      // User is not logged in, open the login modal
+      setLoginModalOpen(true);
+    }
   };
-  console.log(outboundReservations, "ooooooooooooooooooo");
-  const handleCloseSnackbar = () => {
-    setOutboundSnackbarOpen(false);
-  };
-
   const handleConfirmBooking = () => {
     setIsModalOpen(false);
     setShowDownloadButton(true);
@@ -549,6 +552,10 @@ const SingleTrain = () => {
               </DialogActions>
             </Dialog>
           </Grid>
+          <Login
+            open={loginModalOpen}
+            onClose={() => setLoginModalOpen(false)}
+          />
         </Grid>
       </Grid>
     </Grid>
