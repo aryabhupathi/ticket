@@ -79,7 +79,6 @@ const RoundFlight = () => {
       setStartBookingOutbound(true);
       setOpenConfirmModal(true);
     } else {
-      // User is not logged in, open the login modal
       setLoginModalOpen(true);
     }
   };
@@ -88,7 +87,6 @@ const RoundFlight = () => {
       setStartBookingReturn(true);
       setOpenConfirmModal(true);
     } else {
-      // User is not logged in, open the login modal
       setLoginModalOpen(true);
     }
   };

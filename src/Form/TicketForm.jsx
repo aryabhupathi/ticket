@@ -20,7 +20,7 @@ import { RiSwapBoxFill } from "react-icons/ri";
 import Layout from "../Layout";
 
 const TicketReservationForm = () => {
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     transportType: "bus",
     tripType: "single",
@@ -67,8 +67,6 @@ const TicketReservationForm = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Validate form data
     if (
       !formData.source ||
       !formData.destination ||
@@ -163,7 +161,6 @@ const TicketReservationForm = () => {
           </Typography>
 
           <form onSubmit={handleSubmit}>
-            {/* Transport Type Tabs */}
             <Tabs
               value={formData.transportType}
               onChange={handleTransportChange}
@@ -221,8 +218,6 @@ const TicketReservationForm = () => {
                 value="flight"
               />
             </Tabs>
-
-            {/* Trip Type Tabs */}
             <Tabs
               value={formData.tripType}
               onChange={handleTripTypeChange}
@@ -262,8 +257,6 @@ const TicketReservationForm = () => {
                 value="round"
               />
             </Tabs>
-
-            {/* Source and Destination with Reverse Button */}
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} sm={5}>
                 <TextField
@@ -293,8 +286,6 @@ const TicketReservationForm = () => {
                 />
               </Grid>
             </Grid>
-
-            {/* Dates (Departure and Return on Single Line) */}
             <Grid container spacing={2} sx={{ mt: 2, mb: 2 }}>
               <Grid item xs={formData.tripType === "round" ? 6 : 12}>
                 <TextField
@@ -326,14 +317,10 @@ const TicketReservationForm = () => {
                 </Grid>
               )}
             </Grid>
-
-            {/* Submit Button */}
             <Button variant="contained" color="primary" type="submit" fullWidth>
               Search
             </Button>
           </form>
-
-          {/* Snackbar for error messages */}
           <Snackbar
             open={snackbar.open}
             autoHideDuration={2000}
@@ -347,7 +334,6 @@ const TicketReservationForm = () => {
               {snackbar.message}
             </Alert>
           </Snackbar>
-
         </Box>
       </Grid>
     </Layout>

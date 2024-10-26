@@ -88,44 +88,42 @@ const SingleTrain = () => {
 
   const handleReserve = () => {
     if (token) {
-      // User is logged in, open the booking confirmation modal
       const passengerCount = outboundPassengerCount;
-    const newReservations = {};
-    const newReservedCoaches = { ...reservedCoaches };
+      const newReservations = {};
+      const newReservedCoaches = { ...reservedCoaches };
 
-    train.coaches.forEach((coach) => {
-      const count =
-        passengerCount[`${train.trainName}-${coach.coachName}`] || 0;
-      if (count > 0) {
-        const totalFareForCoach = count * coach.fare;
-        newReservations[`${train.trainName}-${coach.coachName}`] = {
-          trainName: train.trainName,
-          coachName: coach.coachName,
-          source: train.source,
-          destination: train.destination,
-          start: train.startTime,
-          end: train.endTime,
-          count,
-          totalFareForCoach,
-        };
+      train.coaches.forEach((coach) => {
+        const count =
+          passengerCount[`${train.trainName}-${coach.coachName}`] || 0;
+        if (count > 0) {
+          const totalFareForCoach = count * coach.fare;
+          newReservations[`${train.trainName}-${coach.coachName}`] = {
+            trainName: train.trainName,
+            coachName: coach.coachName,
+            source: train.source,
+            destination: train.destination,
+            start: train.startTime,
+            end: train.endTime,
+            count,
+            totalFareForCoach,
+          };
 
-        newReservedCoaches[`${train.trainName}-${coach.coachName}`] = true;
+          newReservedCoaches[`${train.trainName}-${coach.coachName}`] = true;
+        }
+      });
+
+      if (Object.keys(newReservations).length > 0) {
+        setOutboundReservations((prevReservations) => [
+          ...prevReservations,
+          ...Object.values(newReservations),
+        ]);
+        setReservedCoaches(newReservedCoaches);
+        setOutboundSnackbarOpen(true);
+        setIsModalOpen(true);
+      } else {
+        alert("Please select at least 1 passenger.");
       }
-    });
-
-    if (Object.keys(newReservations).length > 0) {
-      setOutboundReservations((prevReservations) => [
-        ...prevReservations,
-        ...Object.values(newReservations),
-      ]);
-      setReservedCoaches(newReservedCoaches);
-      setOutboundSnackbarOpen(true);
-      setIsModalOpen(true);
     } else {
-      alert("Please select at least 1 passenger.");
-    }
-    } else {
-      // User is not logged in, open the login modal
       setLoginModalOpen(true);
     }
   };
@@ -285,7 +283,12 @@ const SingleTrain = () => {
 
             <Grid container spacing={3}>
               {train.coaches.map((coach, coachIndex) => (
-                <Grid item xs={12} key={coachIndex} sx={{display:'flex', justifyContent:'center'}}>
+                <Grid
+                  item
+                  xs={12}
+                  key={coachIndex}
+                  sx={{ display: "flex", justifyContent: "center" }}
+                >
                   <Box
                     sx={{
                       backgroundColor: "#f0f4ff",
@@ -432,8 +435,9 @@ const SingleTrain = () => {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed",
-        backgroundPosition: 'center'
-      }}>
+        backgroundPosition: "center",
+      }}
+    >
       <Grid item size={{ xs: 12, sm: 10 }} mt={3}>
         <Grid item size={{ xs: 12 }}>
           <Box

@@ -119,7 +119,7 @@ const RoundTrain = () => {
       return prev;
     });
   };
-  
+
   const handleReserve = () => {
     if (token) {
       const outboundRes = [];
@@ -128,7 +128,8 @@ const RoundTrain = () => {
       trips.outbound.forEach((train) => {
         train.coaches.forEach((coach) => {
           const count =
-            outboundPassengerCount[`${train.trainName}-${coach.coachName}`] || 0;
+            outboundPassengerCount[`${train.trainName}-${coach.coachName}`] ||
+            0;
           if (count > 0) {
             const fareForCoach = count * coach.fare;
             outboundRes.push({
@@ -165,16 +166,15 @@ const RoundTrain = () => {
           }
         });
       });
-  
+
       if (outboundRes.length === 0 && returnRes.length === 0) {
         alert("Please select at least 1 passenger for either trip.");
         return;
       }
-  
+
       setModalReservations({ outboundRes, returnRes, totalFare });
       setIsModalOpen(true);
     } else {
-      // User is not logged in, open the login modal
       setLoginModalOpen(true);
     }
   };
@@ -188,56 +188,65 @@ const RoundTrain = () => {
     }, 2000);
   };
 
-const downloadPDF = () => {
-  const { outboundRes, returnRes } = modalReservations;
-  const reservationsToDownload = [...outboundRes, ...returnRes];
-  if (reservationsToDownload.length === 0) return;
+  const downloadPDF = () => {
+    const { outboundRes, returnRes } = modalReservations;
+    const reservationsToDownload = [...outboundRes, ...returnRes];
+    if (reservationsToDownload.length === 0) return;
 
-  const doc = new jsPDF();
-  const margin = 20;
+    const doc = new jsPDF();
+    const margin = 20;
 
-  doc.setFontSize(16);
-  doc.text("Reservation Details", margin, margin);
+    doc.setFontSize(16);
+    doc.text("Reservation Details", margin, margin);
 
-  const headers = ["Reservation No.", "Train Name", "Coach Name", "Passengers", "Total Fare"];
-  const tableRows = reservationsToDownload.map((reservation, index) => [
-    index + 1,
-    reservation.trainName,
-    reservation.coachName,
-    reservation.count,
-    `$${reservation.totalFareForCoach}`,
-  ]);
+    const headers = [
+      "Reservation No.",
+      "Train Name",
+      "Coach Name",
+      "Passengers",
+      "Total Fare",
+    ];
+    const tableRows = reservationsToDownload.map((reservation, index) => [
+      index + 1,
+      reservation.trainName,
+      reservation.coachName,
+      reservation.count,
+      `$${reservation.totalFareForCoach}`,
+    ]);
 
-  doc.autoTable({
-    head: [headers],
-    body: tableRows,
-    startY: margin + 20, 
-    theme: "grid",
-    styles: {
-      halign: "center", 
-    },
-    columnStyles: {
-      0: { cellWidth: 30 }, 
-      1: { cellWidth: 40 }, 
-      2: { cellWidth: 40 }, 
-      3: { cellWidth: 30 }, 
-      4: { cellWidth: 30 }, 
-    },
-    didDrawPage: (data) => {
+    doc.autoTable({
+      head: [headers],
+      body: tableRows,
+      startY: margin + 20,
+      theme: "grid",
+      styles: {
+        halign: "center",
+      },
+      columnStyles: {
+        0: { cellWidth: 30 },
+        1: { cellWidth: 40 },
+        2: { cellWidth: 40 },
+        3: { cellWidth: 30 },
+        4: { cellWidth: 30 },
+      },
+      didDrawPage: (data) => {
+        let pageCount = doc.internal.getNumberOfPages();
+        let str = `Page ${pageCount}`;
+        doc.setFontSize(10);
+        doc.text(
+          str,
+          data.settings.margin.left,
+          doc.internal.pageSize.getHeight() - 10
+        );
+      },
+    });
 
-      let pageCount = doc.internal.getNumberOfPages();
-      let str = `Page ${pageCount}`;
-      doc.setFontSize(10);
-      doc.text(str, data.settings.margin.left, doc.internal.pageSize.getHeight() - 10);
-    },
-  });
+    const pageHeight = doc.internal.pageSize.getHeight();
+    doc.setFontSize(10);
+    doc.text("Thank you for your reservation!", margin, pageHeight - 10);
 
-  const pageHeight = doc.internal.pageSize.getHeight();
-  doc.setFontSize(10);
-  doc.text("Thank you for your reservation!", margin, pageHeight - 10);
-
-  doc.save("reservation-details.pdf");
-};
+    doc.save("reservation-details.pdf");
+  };
   const renderTrip = (tripType) => {
     const availableTrips = trips[tripType];
 
@@ -362,9 +371,13 @@ const downloadPDF = () => {
                 Stops: {train.stops.join(", ")}
               </Typography>
             </Box>
-            <Grid container spacing={3} sx={{display:'flex', justifyContent:'center'}}>
+            <Grid
+              container
+              spacing={3}
+              sx={{ display: "flex", justifyContent: "center" }}
+            >
               {train.coaches.map((coach, coachIndex) => (
-                <Grid item xs={12} key={coachIndex} >
+                <Grid item xs={12} key={coachIndex}>
                   <Box
                     sx={{
                       backgroundColor: "#f0f4ff",
@@ -468,8 +481,9 @@ const downloadPDF = () => {
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed",
-        backgroundPosition: 'center'
-      }}>
+        backgroundPosition: "center",
+      }}
+    >
       <Grid item size={{ xs: 12, sm: 10 }} mt={3}>
         <Grid item size={{ xs: 12 }}></Grid>
         <Box
@@ -557,10 +571,7 @@ const downloadPDF = () => {
           </Box>
         )}
 
-        <Login
-            open={loginModalOpen}
-            onClose={() => setLoginModalOpen(false)}
-          />
+        <Login open={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
         <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <DialogTitle>
             <Typography variant="h6" gutterBottom>

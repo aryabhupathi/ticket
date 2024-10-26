@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Box, Typography } from "@mui/material";
 
@@ -9,9 +8,9 @@ const Progress = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh", // Full height of the viewport
-        flexDirection: "column", // Stack the items vertically
-        backgroundColor:'#f57c73'
+        height: "100vh",
+        flexDirection: "column",
+        backgroundColor: "#f57c73",
       }}
     >
       <Typography variant="h3" color="blue">

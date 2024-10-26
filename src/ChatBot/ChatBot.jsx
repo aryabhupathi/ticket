@@ -15,7 +15,6 @@ const Chatbot = ({ open, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
-  // Add a useEffect hook to display an initial message
   useEffect(() => {
     setMessages([
       { text: "Hi there! Ask me something to get started.", sender: "bot" },
@@ -26,7 +25,7 @@ const Chatbot = ({ open, onClose }) => {
     if (input.trim()) {
       setMessages([...messages, { text: input, sender: "user" }]);
       setInput("");
-      // Simulate a response from the chatbot
+
       setTimeout(() => {
         const response = getResponse(input);
         setMessages((prevMessages) => [
@@ -38,7 +37,6 @@ const Chatbot = ({ open, onClose }) => {
   };
 
   const getResponse = (userInput) => {
-    // Define your bot's responses
     const responses = {
       hello: "Hello! How can I assist you with your ticket reservation?",
       "how to book a ticket":
@@ -49,16 +47,14 @@ const Chatbot = ({ open, onClose }) => {
         "You're welcome! Let me know if you have any other questions.",
     };
 
-    // Normalize user input for matching
     const normalizedInput = userInput.toLowerCase();
     return responses[normalizedInput] || "I'm sorry, I didn't understand that.";
   };
 
-  // New function to handle key presses
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      event.preventDefault(); // Prevents form submission
-      handleSend(); // Calls the send function
+      event.preventDefault();
+      handleSend();
     }
   };
 
@@ -71,10 +67,10 @@ const Chatbot = ({ open, onClose }) => {
         boxShadow: 3,
         borderRadius: "8px",
         overflow: "hidden",
-        width: { xs: "90%", sm: 300 }, // Full width on mobile, fixed width on larger screen
-        backgroundColor: "rgba(255, 255, 255, 0.9)", // Make background slightly transparent
-        backdropFilter: "blur(10px)", // Optional blur effect
-        zIndex: 1000, // Ensure it is on top
+        width: { xs: "90%", sm: 300 },
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        backdropFilter: "blur(10px)",
+        zIndex: 1000,
       }}
       open={open}
       onClose={onClose}
@@ -101,7 +97,7 @@ const Chatbot = ({ open, onClose }) => {
             size="small"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress} // Add key press handler here
+            onKeyPress={handleKeyPress}
             placeholder="Type a message..."
           />
           <Button

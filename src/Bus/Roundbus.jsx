@@ -11,7 +11,7 @@ import {
   Alert,
   Paper,
 } from "@mui/material";
-import "jspdf-autotable"
+import "jspdf-autotable";
 import Login from "../Login/Login";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useLocation } from "react-router-dom";
@@ -107,16 +107,12 @@ const RoundBus = () => {
     }));
   };
 
-  
   const handleBookSeats = (tripType) => {
     if (token) {
-      // User is logged in, open the booking confirmation modal
-      
-    setCurrentTripType(tripType);
-    setOpenConfirmModal(true);
+      setCurrentTripType(tripType);
+      setOpenConfirmModal(true);
       setOpenConfirmModal(true);
     } else {
-      // User is not logged in, open the login modal
       setLoginModalOpen(true);
     }
   };
@@ -132,62 +128,62 @@ const RoundBus = () => {
     }, 2000);
     setDownload(true);
   };
-const downloadPDF = () => {
-  const doc = new jsPDF();
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 20;
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 20;
 
-  doc.setFontSize(22);
-  doc.text("Reservation Details", margin, margin);
-  doc.setFontSize(12);
-  doc.text(
-    `Date: ${new Date().toLocaleDateString()}`,
-    pageWidth - margin - 50,
-    margin
-  );
+    doc.setFontSize(22);
+    doc.text("Reservation Details", margin, margin);
+    doc.setFontSize(12);
+    doc.text(
+      `Date: ${new Date().toLocaleDateString()}`,
+      pageWidth - margin - 50,
+      margin
+    );
 
-  const headers = ["Bus Name", "Route", "Seats", "Fare"];
-  let tableRows = [];
+    const headers = ["Bus Name", "Route", "Seats", "Fare"];
+    let tableRows = [];
 
-  Object.keys(selectedSeats).forEach((tripType) => {
-    const selectedSeatsForTrip = selectedSeats[tripType];
-    const selectedBusDetails = selectedBus[tripType];
+    Object.keys(selectedSeats).forEach((tripType) => {
+      const selectedSeatsForTrip = selectedSeats[tripType];
+      const selectedBusDetails = selectedBus[tripType];
 
-    const seats = selectedSeatsForTrip[selectedBusDetails.busName] || [];
-    if (seats.length > 0) {
-      const fare = selectedBusDetails.fare * seats.length;
+      const seats = selectedSeatsForTrip[selectedBusDetails.busName] || [];
+      if (seats.length > 0) {
+        const fare = selectedBusDetails.fare * seats.length;
 
-      tableRows.push([
-        selectedBusDetails.busName,
-        `${selectedBusDetails.source} to ${selectedBusDetails.destination}`,
-        seats.join(", "),
-        `$${fare}`,
-      ]);
-    }
-  });
+        tableRows.push([
+          selectedBusDetails.busName,
+          `${selectedBusDetails.source} to ${selectedBusDetails.destination}`,
+          seats.join(", "),
+          `$${fare}`,
+        ]);
+      }
+    });
 
-  doc.autoTable({
-    head: [headers],
-    body: tableRows,
-    startY: 40, 
-    theme: "grid",
-    styles: {
-      halign: "center", 
-    },
-    columnStyles: {
-      0: { cellWidth: 60 }, 
-      1: { cellWidth: 80 }, 
-      2: { cellWidth: 50 }, 
-      3: { cellWidth: 30 }, 
-    },
-  });
+    doc.autoTable({
+      head: [headers],
+      body: tableRows,
+      startY: 40,
+      theme: "grid",
+      styles: {
+        halign: "center",
+      },
+      columnStyles: {
+        0: { cellWidth: 60 },
+        1: { cellWidth: 80 },
+        2: { cellWidth: 50 },
+        3: { cellWidth: 30 },
+      },
+    });
 
-  doc.setFontSize(10);
-  doc.text("Thank you for your reservation!", margin, pageHeight - margin);
+    doc.setFontSize(10);
+    doc.text("Thank you for your reservation!", margin, pageHeight - margin);
 
-  doc.save("reservation-details.pdf");
-};
+    doc.save("reservation-details.pdf");
+  };
 
   const handleChange = (busIndex, tripType) => {
     const isCurrentlyExpanded = expandedIndex[tripType] === busIndex;
@@ -699,7 +695,7 @@ const downloadPDF = () => {
             open={loginModalOpen}
             onClose={() => setLoginModalOpen(false)}
           />
-          
+
           {downloads && (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
               <Button

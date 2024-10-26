@@ -76,10 +76,8 @@ const SingleBus = () => {
 
   const handleBookSeats = () => {
     if (token) {
-      // User is logged in, open the booking confirmation modal
       setOpenConfirmModal(true);
     } else {
-      // User is not logged in, open the login modal
       setLoginModalOpen(true);
     }
   };
@@ -415,7 +413,7 @@ const SingleBus = () => {
                           <Button
                             variant="contained"
                             color="primary"
-                            onClick={handleBookSeats} // This should open the booking modal
+                            onClick={handleBookSeats}
                             sx={{ mt: 2 }}
                           >
                             Book

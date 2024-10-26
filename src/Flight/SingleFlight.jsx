@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import TicketStepper from "./TicketStepper"; 
+import TicketStepper from "./TicketStepper";
 import { useLocation } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import { flight } from "../data";
@@ -55,7 +55,6 @@ const SingleFlight = () => {
     if (token) {
       setStartBooking(true);
     } else {
-      // User is not logged in, open the login modal
       setLoginModalOpen(true);
     }
   };
@@ -71,7 +70,6 @@ const SingleFlight = () => {
     }, 2000);
   };
 
-  
   const downloadPDF = () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -82,7 +80,11 @@ const SingleFlight = () => {
     doc.text("Reservation Details", margin, margin);
 
     doc.setFontSize(12);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, pageWidth - margin - 50, margin);
+    doc.text(
+      `Date: ${new Date().toLocaleDateString()}`,
+      pageWidth - margin - 50,
+      margin
+    );
 
     const headers = ["Flight Name", "Route", "Start Time", "Seats", "Fare"];
 
@@ -109,17 +111,17 @@ const SingleFlight = () => {
     doc.autoTable({
       head: [headers],
       body: tableRows,
-      startY: 40, 
-      theme: "grid", 
+      startY: 40,
+      theme: "grid",
       styles: {
-        halign: "center", 
+        halign: "center",
       },
       columnStyles: {
-        0: { cellWidth: 40 }, 
-        1: { cellWidth: 40 }, 
-        2: { cellWidth: 40 }, 
-        3: { cellWidth: 30 }, 
-        4: { cellWidth: 20 }, 
+        0: { cellWidth: 40 },
+        1: { cellWidth: 40 },
+        2: { cellWidth: 40 },
+        3: { cellWidth: 30 },
+        4: { cellWidth: 20 },
       },
     });
 
@@ -128,7 +130,7 @@ const SingleFlight = () => {
 
     doc.save("flight-reservation-details.pdf");
   };
-  
+
   const handleChange = (flightIndex) => {
     setExpanded(expanded === flightIndex ? false : flightIndex);
     handleFlightSelect(outboundTrips[flightIndex]);
@@ -183,7 +185,8 @@ const SingleFlight = () => {
                   margin: 0,
                 }}
               >
-                Available Flights from {formData.source} to {formData.destination}
+                Available Flights from {formData.source} to{" "}
+                {formData.destination}
               </Typography>
             </Paper>
           </Box>
@@ -200,7 +203,6 @@ const SingleFlight = () => {
                   onChange={() => handleChange(index)}
                   sx={{ mb: 2 }}
                 >
-
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     sx={{
@@ -233,7 +235,7 @@ const SingleFlight = () => {
                           color: "blue",
                           fontWeight: "bold",
                           ml: 2,
-                          mb: { xs: 1, sm: 0 }, 
+                          mb: { xs: 1, sm: 0 },
                         }}
                       >
                         {details.flightName}
@@ -259,7 +261,7 @@ const SingleFlight = () => {
                         sx={{
                           color: "green",
                           ml: 2,
-                          mb: { xs: 1, sm: 0 }, 
+                          mb: { xs: 1, sm: 0 },
                         }}
                       >
                         Route: {details.source} to {details.destination}
@@ -292,69 +294,68 @@ const SingleFlight = () => {
                   </AccordionSummary>
 
                   <AccordionDetails>
+                    <Box
+                      sx={{
+                        border: "1px solid lightgray",
+                        borderRadius: "4px",
+                        padding: 2,
+                        mb: 2,
+                        backgroundColor: "#f9f9f9",
+                      }}
+                    >
                       <Box
-                        sx={{
-                          border: "1px solid lightgray",
-                          borderRadius: "4px",
-                          padding: 2,
-                          mb: 2,
-                          backgroundColor: "#f9f9f9",
-                        }}
+                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
                       >
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                        >
-                          <Typography
-                            variant="body2"
-                            sx={{ color: "blue", mr: 1 }}
-                          >
-                            Start Time: {details.startTime}
-                          </Typography>
-
-                          <Typography variant="body2" sx={{ color: "blue" }}>
-                            | End Time: {details.endTime}
-                          </Typography>
-                        </Box>
-
                         <Typography
                           variant="body2"
-                          sx={{ color: "green", mt: 1 }}
+                          sx={{ color: "blue", mr: 1 }}
                         >
-                          Stops: {details.stops.join(", ")}
+                          Start Time: {details.startTime}
                         </Typography>
 
-                        <Typography
-                          variant="body2"
-                          sx={{ color: "orange", mt: 1 }}
-                        >
-                          Seats Available: {details.noOfSeatsAvailable}
+                        <Typography variant="body2" sx={{ color: "blue" }}>
+                          | End Time: {details.endTime}
                         </Typography>
-
-                        <Button onClick={handleStartBooking}>Proceed</Button>
-                        {startBooking && !bookingConfirmed && (
-                          <TicketStepper
-                            selectedFlight={selectedFlight}
-                            seatLayout={selectedFlight?.layout} 
-                            seatCategories={selectedFlight?.seatCategories} 
-                            onTotalFare={handleTotalFareUpdate}
-                            setSelectedSeats={setSelectedSeats}
-                          />
-                        )}
                       </Box>
 
-                      <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "green", mt: 1 }}
+                      >
+                        Stops: {details.stops.join(", ")}
+                      </Typography>
 
-                        {bookingConfirmed && (
-                          <Button
-                            variant="contained"
-                            color="success"
-                            onClick={downloadPDF}
-                            sx={{ mt: 2 }}
-                          >
-                            Download Ticket
-                          </Button>
-                        )}
-                      </Box>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "orange", mt: 1 }}
+                      >
+                        Seats Available: {details.noOfSeatsAvailable}
+                      </Typography>
+
+                      <Button onClick={handleStartBooking}>Proceed</Button>
+                      {startBooking && !bookingConfirmed && (
+                        <TicketStepper
+                          selectedFlight={selectedFlight}
+                          seatLayout={selectedFlight?.layout}
+                          seatCategories={selectedFlight?.seatCategories}
+                          onTotalFare={handleTotalFareUpdate}
+                          setSelectedSeats={setSelectedSeats}
+                        />
+                      )}
+                    </Box>
+
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      {bookingConfirmed && (
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={downloadPDF}
+                          sx={{ mt: 2 }}
+                        >
+                          Download Ticket
+                        </Button>
+                      )}
+                    </Box>
                   </AccordionDetails>
                 </Accordion>
               ))
